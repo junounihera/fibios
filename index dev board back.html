@@ -1,0 +1,108 @@
+
+  <script src="assets/js/main.js" defer></script>
+
+  <!-- DEV MODE RIGHT SIDEBAR -->
+  <div id="dev-panel" style="display: none; position: fixed; top: 0; right: 0; bottom: 0; width: 340px; background: var(--bg-body); border-left: 2px solid var(--accent); padding: 1.5rem; z-index: 9999; box-shadow: -10px 0 30px rgba(0,0,0,0.7); overflow-y: auto; font-family: var(--font-ui);">
+    
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <h3 style="margin: 0; color: var(--accent); font-size: 1rem; text-transform: uppercase; letter-spacing: 2px;">🛠️ Editor</h3>
+      <div style="display: flex; gap: 10px;">
+        <button type="button" onclick="saveDevTheme()" class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.7rem; background: var(--accent); color: var(--bg-body);">Save</button>
+        <button type="button" onclick="closeDevPanel()" style="background: none; border: none; color: var(--text-main); cursor: pointer; font-size: 1.5rem; padding: 0;">&times;</button>
+      </div>
+    </div>
+
+    <!-- 1. FACTORY MODE TOGGLE -->
+    <div style="margin-bottom: 1.5rem; padding: 12px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 4px;">
+      <label class="toggle-switch">
+        <input type="checkbox" id="toggle-factory" onchange="toggleFactoryMode(this.checked)">
+        <span class="toggle-slider"></span>
+        Enable Factory Mode
+      </label>
+    </div>
+
+    <!-- 2. SELECTION TOOLBAR -->
+    <div id="selection-toolbar" style="display: none; margin-bottom: 1.5rem; padding: 15px; border: 2px solid var(--accent); border-radius: 4px; background: color-mix(in srgb, var(--accent) 5%, transparent);">
+      <p style="margin: 0 0 12px 0; font-size: 0.85rem; color: var(--text-main);">Selected: <strong id="selected-label" style="color: var(--accent);"></strong></p>
+      
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 1rem;">
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-drag" onchange="toggleDragMode(this.checked)">
+          <span class="toggle-slider"></span>
+          Drag & Drop
+        </label>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-edit-text" onchange="toggleTextEditMode(this.checked)">
+          <span class="toggle-slider"></span>
+          Edit Text Content
+        </label>
+      </div>
+
+      <!-- Typography Controls -->
+      <div style="padding-top: 1rem; border-top: 1px dashed var(--border-color);">
+        <p style="margin: 0 0 8px 0; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Typography</p>
+        
+        <div style="display: flex; gap: 6px; align-items: stretch;">
+          
+          <!-- B / I Toggles -->
+          <button class="typo-btn" id="btn-bold" onclick="toggleBold(this)" style="font-weight: 900; font-family: var(--font-serif);">B</button>
+          <button class="typo-btn" id="btn-italic" onclick="toggleItalic(this)" style="font-style: italic; font-family: var(--font-serif);">I</button>
+
+          <!-- Up / Down Stack -->
+          <div class="size-stack">
+            <button class="typo-btn-mini" onclick="adjustSize(1)" title="Increase Size">▲</button>
+            <button class="typo-btn-mini" onclick="adjustSize(-1)" title="Decrease Size">▼</button>
+          </div>
+
+          <!-- Alignment -->
+          <div style="display: flex; gap: 4px; flex: 1;">
+            <button class="typo-btn" onclick="setTextAlign('left', this)" title="Align Left">←</button>
+            <button class="typo-btn" onclick="setTextAlign('center', this)" title="Align Center">↔</button>
+            <button class="typo-btn" onclick="setTextAlign('right', this)" title="Align Right">→</button>
+            <button class="typo-btn" onclick="setTextAlign('justify', this)" title="Justify">☰</button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Layout Controls -->
+      <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border-color);">
+        <p style="margin: 0 0 8px 0; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Width</p>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
+          <button onclick="setLayout('stretch')" class="btn" style="padding: 4px; font-size: 0.7rem; background: transparent; border-color: var(--border-color); color: var(--text-main);">Stretch</button>
+          <button onclick="setLayout('center')" class="btn" style="padding: 4px; font-size: 0.7rem; background: transparent; border-color: var(--border-color); color: var(--text-main);">Center</button>
+          <button onclick="setLayout('reset')" class="btn" style="padding: 4px; font-size: 0.7rem; background: transparent; border-color: var(--border-color); color: var(--text-main);">Reset</button>
+          <button onclick="setLayout('50')" class="btn" style="padding: 4px; font-size: 0.7rem; background: transparent; border-color: var(--border-color); color: var(--text-main);">1/2</button>
+          <button onclick="setLayout('33')" class="btn" style="padding: 4px; font-size: 0.7rem; background: transparent; border-color: var(--border-color); color: var(--text-main);">1/3</button>
+          <button onclick="setLayout('25')" class="btn" style="padding: 4px; font-size: 0.7rem; background: transparent; border-color: var(--border-color); color: var(--text-main);">1/4</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. COLORS SECTION (5x2 Grid) -->
+    <div id="color-grid-section">
+      <p style="margin: 0 0 10px 0; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Global Colours</p>
+      
+      <div class="dev-color-grid">
+        <div class="dev-color-item"><span>Page</span><input type="color" id="dev-bg-body" data-var="--bg-body" value="#0A192F"></div>
+        <div class="dev-color-item"><span>Card</span><input type="color" id="dev-bg-card" data-var="--bg-card" value="#112240"></div>
+        <div class="dev-color-item"><span>Text</span><input type="color" id="dev-text-main" data-var="--text-main" value="#CCD6F6"></div>
+        <div class="dev-color-item"><span>Sub</span><input type="color" id="dev-text-muted" data-var="--text-muted" value="#8892B0"></div>
+        <div class="dev-color-item"><span>Border</span><input type="color" id="dev-border" data-var="--border-color" value="#233554"></div>
+        
+        <div class="dev-color-item"><span>Accent</span><input type="color" id="dev-accent" data-var="--accent" value="#64FFDA"></div>
+        <div class="dev-color-item"><span>Success</span><input type="color" id="dev-success" data-var="--color-success" value="#22C55E"></div>
+        <div class="dev-color-item"><span>Neutral</span><input type="color" id="dev-neutral" data-var="--color-neutral" value="#94A3B8"></div>
+        <div class="dev-color-item"><span>Warning</span><input type="color" id="dev-warning" data-var="--color-warning" value="#F59E0B"></div>
+        <div class="dev-color-item"><span>Error</span><input type="color" id="dev-danger" data-var="--color-danger" value="#EF4444"></div>
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+      <button type="button" onclick="resetDevTheme()" style="background: none; border: none; color: var(--color-danger); font-size: 0.7rem; cursor: pointer; text-decoration: underline;">Reset Site</button>
+    </div>
+
+  </div>
+</body>
+</html>

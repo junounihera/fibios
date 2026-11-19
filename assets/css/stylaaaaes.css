@@ -1,0 +1,5108 @@
+@charset "UTF-8";
+/* ==========================================================================
+   FibiOS — FibiOS.com
+   Flattened stylesheet.
+
+   One declaration per component. Every colour resolves through the seven
+   tokens on :root. Switch a surface with `data-theme="light"` or
+   `data-theme="dark"`; the default and `data-theme="FibiOS"` both resolve to
+   the shipped look. No override layers, no !important, no duplicate rules.
+
+   Structure, top to bottom:
+     1. Tokens (seven-token map + the two inverted surfaces)
+     2. Reset
+     3. Base
+     4. Utilities
+     5. Header + navigation + theme switch
+     6. Hero (the pinned-navy fold)
+     7. Prose
+     8. Buttons
+     9. Sections
+    10. Cards
+    11. Feed + sidebar + pledge
+    12. Contact form
+    13. Footer
+    14. Article page
+    15. Two-column intro (homepage)
+    16. Motion + print
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Tokens
+   -------------------------------------------------------------------------- */
+:root,
+[data-theme="FibiOS"] {
+  --bg-body: #0A192F;
+  --bg-card: #112240;
+  --bg-input: #0A192F;
+  --text-main: #CCD6F6;
+  --text-muted: #8892B0;
+  --border-color: #233554;
+  --accent: #64FFDA;
+
+  --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Merriweather", Georgia, "Times New Roman", Times, serif;
+
+  --wrap: 1160px;
+  --measure: 68ch;
+  --gutter: 1.5rem;
+  --section-y: clamp(3rem, 1.6rem + 6vw, 6rem);
+}
+
+[data-theme="light"] {
+  --bg-body: #F8F9FA;
+  --bg-card: #FFFFFF;
+  --bg-input: #F8F9FA;
+  --text-main: #0A192F;
+  --text-muted: #4A5A7A;
+  --border-color: #E2E8F0;
+  --accent: #0A192F;
+}
+
+[data-theme="dark"] {
+  --bg-body: #050505;
+  --bg-card: #121212;
+  --bg-input: #050505;
+  --text-main: #F8F9FA;
+  --text-muted: #A0A0A0;
+  --border-color: #333333;
+  --accent: #64FFDA;
+}
+
+@media (min-width: 640px) {
+  :root { --gutter: 2rem; }
+}
+@media (min-width: 900px) {
+  :root { --gutter: 2.5rem; }
+}
+
+/* --------------------------------------------------------------------------
+   2. Reset
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body,
+h1, h2, h3, h4, p, figure, blockquote,
+ul, ol, dl, dd { margin: 0; }
+
+ul[role="list"],
+ol[role="list"] { list-style: none; padding: 0; }
+
+img, picture, svg { display: block; max-width: 100%; }
+img { height: auto; }
+
+button, input, textarea, select {
+  font: inherit;
+  color: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   3. Base
+   -------------------------------------------------------------------------- */
+body,
+.page-article {
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  /* The sequencing lattice: a 24px dot grid struck in the border colour. */
+  background-image: radial-gradient(var(--border-color) 1px, transparent 1.6px);
+  background-size: 24px 24px;
+  background-repeat: repeat;
+  background-attachment: fixed;
+  background-position: 0 0;
+}
+
+/* On paper the border colour is 1.17:1 against the ground. Lift it a shade. */
+[data-theme="light"] body,
+[data-theme="light"] .page-article {
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--border-color) 45%, var(--text-muted)) 1px,
+    transparent 1.6px
+  );
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  line-height: 1.7;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--text-main);
+  text-decoration: none;
+  text-underline-offset: 0.22em;
+  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}
+
+strong, b { font-weight: 600; color: var(--text-main); }
+em, i { font-style: italic; }
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--border-color);
+  margin: 2.5rem 0;
+}
+
+::selection { background: var(--accent); color: var(--bg-body); }
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 1px;
+}
+
+/* --------------------------------------------------------------------------
+   4. Utilities
+   -------------------------------------------------------------------------- */
+.wrap {
+  width: 100%;
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 200;
+  transform: translateY(-120%);
+  background: var(--accent);
+  color: var(--bg-body);
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0 0 2px 0;
+}
+.skip-link:focus {
+  transform: translateY(0);
+  text-decoration: none;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.eyebrow {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* --------------------------------------------------------------------------
+   5. Header, navigation, theme switch
+   -------------------------------------------------------------------------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  background-color: var(--bg-body);
+  background-image: none;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 4.25rem;
+  padding-block: 0.75rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex: 0 0 auto;
+  color: var(--text-main);
+  text-decoration: none;
+}
+.brand:hover { text-decoration: none; }
+
+.brand-mark {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  object-fit: cover;
+}
+
+.brand-name {
+  font-family: var(--font-ui);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: NONE;
+  color: var(--text-main);
+}
+.brand-name::after {
+  content: "";
+  display: block;
+  height: 1px;
+  width: 100%;
+  background: var(--accent);
+  margin-top: 0.15rem;
+}
+
+/* Hamburger — mobile only. */
+.nav-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+.nav-toggle:hover { border-color: var(--accent); }
+
+.nav-toggle-bars {
+  position: relative;
+  display: block;
+  width: 1.125rem;
+  height: 2px;
+  background: var(--text-main);
+}
+.nav-toggle-bars::before,
+.nav-toggle-bars::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 1.125rem;
+  height: 2px;
+  background: var(--text-main);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.nav-toggle-bars::before { top: -6px; }
+.nav-toggle-bars::after { top: 6px; }
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-bars { background: transparent; }
+.nav-toggle[aria-expanded="true"] .nav-toggle-bars::before {
+  transform: translateY(6px) rotate(45deg);
+  background: var(--accent);
+}
+.nav-toggle[aria-expanded="true"] .nav-toggle-bars::after {
+  transform: translateY(-6px) rotate(-45deg);
+  background: var(--accent);
+}
+
+/* Nav — collapsed by default, mobile-first, overlay on mobile. */
+.primary-nav {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  padding-inline: var(--gutter);
+  background: var(--bg-body);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 1rem 2rem rgba(2, 12, 27, 0.55);
+}
+.primary-nav.is-open { display: block; }
+
+.primary-nav ul {
+  list-style: none;
+  padding: 0.5rem 0 1rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border-color);
+}
+.primary-nav li { margin: 0; }
+
+.primary-nav a {
+  display: block;
+  padding: 0.7rem 0.25rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-main);
+  border-bottom: 2px solid transparent;
+  transition: color 0.3s ease, border-bottom-color 0.3s ease;
+}
+.primary-nav a:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  text-decoration: none;
+}
+.primary-nav a[aria-current="page"] {
+  color: var(--accent);
+  border-bottom-color: var(--border-color);
+}
+
+@media (min-width: 640px) {
+  .nav-toggle { display: none; }
+
+  .primary-nav {
+    display: block;
+    position: static;
+    padding-inline: 0;
+    background: transparent;
+    border-bottom: 0;
+    box-shadow: none;
+    margin-left: auto;
+  }
+  .primary-nav ul {
+    flex-direction: row;
+    gap: 1.25rem;
+    border-top: 0;
+    padding-block: 0;
+  }
+  .primary-nav a {
+    padding: 0.35rem 0;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+  }
+}
+
+@media (min-width: 900px) {
+  .primary-nav ul { gap: 2rem; }
+}
+
+/* Surface switch. */
+.theme-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background-color: var(--bg-card);
+  flex: 0 0 auto;
+}
+
+.theme-switch-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-width: 2rem;
+  min-height: 2.5rem;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background-color: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease;
+}
+.theme-switch-btn:hover { color: var(--text-main); }
+
+[data-theme="light"] .theme-switch-btn[data-set-theme="light"],
+[data-theme="FibiOS"] .theme-switch-btn[data-set-theme="FibiOS"],
+[data-theme="dark"] .theme-switch-btn[data-set-theme="dark"],
+html:not([data-theme]) .theme-switch-btn[data-set-theme="FibiOS"] {
+  color: var(--text-main);
+  background-color: var(--bg-body);
+  border-color: var(--border-color);
+}
+
+.theme-swatch {
+  display: block;
+  width: 0.625rem;
+  height: 0.625rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+}
+.theme-swatch--light { background-color: #F8F9FA; }
+.theme-swatch--FibiOS { background-color: #0A192F; }
+.theme-swatch--dark { background-color: #050505; }
+
+.theme-switch-label { display: none; }
+
+@media (max-width: 639px) {
+  .theme-switch { margin-left: auto; order: 2; }
+  .nav-toggle { order: 3; }
+}
+
+@media (min-width: 640px) {
+  .theme-switch { margin-left: 1rem; }
+  .theme-switch-btn { min-height: 1.75rem; }
+}
+
+@media (min-width: 768px) {
+  .theme-switch-btn { min-width: 0; padding: 0 0.6rem; }
+  .theme-switch-label { display: inline; }
+}
+
+/* --------------------------------------------------------------------------
+   6. Hero — the pinned-navy fold
+   -------------------------------------------------------------------------- */
+.hero {
+  width: 100%;
+  padding-block: clamp(4rem, 2rem + 8vw, 8rem);
+  background-color: #0A192F;
+  border-bottom: 1px solid #233554;
+}
+
+@media (min-width: 900px) {
+  .hero {
+    background-image: url("../img/hero.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 74% 50%;
+    background-blend-mode: multiply;
+  }
+}
+
+.hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #CCD6F6;
+  margin-bottom: 1.25rem;
+}
+.hero-kicker::before {
+  content: "";
+  display: block;
+  flex: 0 0 auto;
+  width: 1.75rem;
+  height: 1px;
+  background: rgba(100, 255, 218, 0.32);
+}
+
+.hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.5rem, 1.4rem + 5.5vw, 5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+  margin-bottom: 1.5rem;
+  max-width: none;
+}
+@supports (text-wrap: balance) {
+  .hero-title { text-wrap: balance; }
+}
+
+.hero-sub {
+  font-family: var(--font-ui);
+  font-size: clamp(1.125rem, 1rem + 1vw, 1.375rem);
+  line-height: 1.6;
+  color: #CCD6F6;
+  max-width: 56ch;
+  margin-bottom: 2.5rem;
+}
+
+.hero-cta {
+  display: inline-block;
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 1rem 1.9rem;
+  border-radius: 2px;
+  text-decoration: none;
+  color: #FFFFFF;
+  background: transparent;
+  border: 1px solid rgba(204, 214, 246, 0.3);
+  transition: color 180ms ease, border-color 180ms ease,
+    background-color 180ms ease, transform 180ms ease;
+}
+.hero-cta:hover {
+  color: #64FFDA;
+  border-color: #64FFDA;
+  background-color: rgba(100, 255, 218, 0.08);
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+.hero-cta:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.hero-latest { margin-top: 3.5rem; }
+
+.hero-latest-title {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8892B0;
+  margin-bottom: 1.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   7. Prose
+   -------------------------------------------------------------------------- */
+.prose { max-width: 35rem; }
+
+.prose > p {
+  margin-bottom: 1.35em;
+  color: var(--text-main);
+}
+.prose > p:last-child { margin-bottom: 0; }
+
+.lede {
+  font-size: clamp(1.1875rem, 1.05rem + 0.6vw, 1.4375rem);
+  line-height: 1.55;
+  color: var(--text-main);
+  font-weight: 400;
+  margin-bottom: 1.5em;
+}
+
+/* --------------------------------------------------------------------------
+   8. Buttons
+   -------------------------------------------------------------------------- */
+.cta-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  margin-top: 2.25rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--border-color);
+}
+.cta-line strong {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  width: 100%;
+}
+
+.btn {
+  display: inline-block;
+  background-color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 2px;
+  color: var(--bg-body);
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  min-height: 2.75rem;
+  padding: 0.95rem 1.6rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background-color 180ms ease, border-color 180ms ease,
+    color 180ms ease, transform 180ms ease;
+}
+.btn:hover {
+  background-color: var(--bg-card);
+  border-color: var(--accent);
+  color: var(--text-main);
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+.btn:focus-visible {
+  outline-color: var(--accent);
+  outline-offset: 3px;
+}
+
+.text-link {
+  font-weight: 500;
+  color: var(--text-main);
+  border-bottom: 1px solid var(--accent);
+}
+.text-link:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* --------------------------------------------------------------------------
+   9. Sections
+   -------------------------------------------------------------------------- */
+.section {
+  padding-block: var(--section-y);
+  border-top: 1px solid var(--border-color);
+  scroll-margin-top: 5.5rem;
+}
+#main > .section:first-child,
+#main > .hero + .section { border-top: 0; }
+
+.section-head { margin-bottom: clamp(1.75rem, 1rem + 2vw, 2.75rem); }
+
+.section-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.375rem, 1.1rem + 1.1vw, 1.875rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--text-main);
+}
+
+.section-lead {
+  font-family: var(--font-ui);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: var(--measure);
+  margin-bottom: 1.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   10. Cards
+   -------------------------------------------------------------------------- */
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.5rem, 1rem + 1.5vw, 2rem);
+}
+@media (min-width: 768px) {
+  .card-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-card);
+  background-image: none;
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+  box-shadow: none;
+  transition: transform 220ms ease, box-shadow 220ms ease,
+    border-color 220ms ease, background-color 220ms ease;
+}
+.card:hover,
+.card:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 18px 40px -30px rgba(0, 0, 0, 0.6);
+  transform: translateY(-3px);
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  gap: 0.75rem;
+  padding: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+}
+
+.card-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.0625rem, 0.98rem + 0.5vw, 1.25rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--text-main);
+}
+.card-title a { color: inherit; text-decoration: none; }
+.card-title a:hover { color: var(--accent); text-decoration: none; }
+.card-title a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.card-text {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  flex: 1 1 auto;
+}
+
+.card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+.card-meta > * + *::before {
+  content: "\00b7";
+  margin-right: 0.5rem;
+  color: var(--accent);
+}
+
+.tag {
+  display: inline-block;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.6rem;
+  border-radius: 2px;
+  color: var(--text-muted);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+}
+.card:hover .tag,
+.card:focus-within .tag {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* --- Three Pillars Grid --- */
+.pillar-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+@media (min-width: 768px) {
+  .pillar-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.pillar-card {
+  display: block;
+  padding: 2rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.pillar-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+  text-decoration: none;
+}
+.pillar-card h3 {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  color: var(--text-main);
+  margin-bottom: 1rem;
+}
+.pillar-card .tag {
+  margin-bottom: 1rem;
+}
+.pillar-card p {
+  font-family: var(--font-ui);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   11. Feed, sidebar, pledge, mantra
+   -------------------------------------------------------------------------- */
+.pub-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: clamp(2rem, 4vw, 4rem);
+  row-gap: 2.5rem;
+  align-items: start;
+}
+.feed,
+.sidebar { min-width: 0; }
+
+@media (min-width: 1024px) {
+  .pub-layout { grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr); }
+  .sidebar { position: sticky; top: 5rem; }
+}
+
+.feed-list { list-style: none; padding: 0; margin: 0; }
+
+.feed-item {
+  position: relative;
+  padding: 1.5rem 1rem;
+  margin-inline: -1rem;
+  border-top: 1px solid var(--border-color);
+  transition: background-color 180ms ease, border-color 180ms ease;
+}
+
+.feed-item:focus-within {
+  outline: 1px solid var(--accent);
+  outline-offset: 0.35rem;
+}
+.feed-item:nth-child(odd) { background-color: var(--bg-card); }
+.feed-item:nth-child(even) {
+  background-color: color-mix(in srgb, var(--bg-card) 88%, transparent);
+}
+
+/* Published rows: pointer cursor, hover warmth, and a full-row click target. */
+.feed-item[data-status="published"] {
+  cursor: pointer;
+}
+.feed-item[data-status="published"]:hover {
+  background-color: color-mix(in srgb, var(--bg-card) 70%, var(--border-color));
+  border-top-color: var(--accent);
+}
+.feed-item .feed-title a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+.feed-item .feed-title a:focus-visible {
+  outline: none;
+}
+
+.feed-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+.feed-title a {
+  color: var(--text-main);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+.feed-item:hover .feed-title a { border-bottom-color: var(--accent); }
+.feed-title a:focus-visible,
+.feed-more:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.feed-dek {
+  color: var(--text-muted);
+  margin-top: 0.35rem;
+}
+@supports (text-wrap: pretty) {
+  .feed-dek { text-wrap: pretty; }
+}
+
+.forthcoming-marker {
+  display: inline-block;
+  margin-left: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  padding: 0.15rem 0.5rem;
+  border-radius: 2px;
+}
+
+.feed-more {
+  margin-top: 1.5rem;
+  padding: 0.875rem 1.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-main);
+  font-family: var(--font-ui);
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 180ms ease, border-color 180ms ease, background-color 180ms ease;
+}
+.feed-more:hover {
+  background: color-mix(in srgb, var(--bg-card) 70%, transparent);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.sidebar-block {
+  position: relative;
+  padding: 1.25rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-top: 1px solid var(--border-color);
+}
+.sidebar-block::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 1.25rem;
+  width: 2.5rem;
+  height: 2px;
+  background: var(--accent);
+}
+.sidebar-block + .sidebar-block { margin-top: 2rem; }
+
+.board-title {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.75rem;
+  text-align: center
+}
+.board-text {
+  color: var(--text-main);
+  font-family: var(--font-ui);
+  font-size: 0.9375rem;
+}
+
+.pledge {
+  border-top: 1px solid var(--border-color);
+  padding-block: var(--section-y);
+}
+.pledge-inner { max-width: 60ch; }
+.pledge-text {
+  font-family: var(--font-serif);
+  font-size: clamp(1.0625rem, 0.98rem + 0.5vw, 1.25rem);
+  line-height: 1.75;
+  color: var(--text-main);
+  margin-top: 1.25rem;
+}
+.pledge-link { margin-top: 1.5rem; }
+
+.newsletter {
+  margin-top: 2rem;
+  display: grid;
+  gap: 0.75rem;
+  max-width: 32rem;
+}
+.newsletter-label {
+  display: block;
+  color: var(--text-main);
+  font-weight: 600;
+}
+.newsletter-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--bg-input);
+  color: var(--text-main);
+}
+.newsletter-input::placeholder { color: var(--text-muted); }
+.newsletter-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-color: var(--accent);
+}
+.newsletter-button {
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-main);
+  font-family: var(--font-ui);
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 180ms ease, border-color 180ms ease, background-color 180ms ease;
+}
+.newsletter-button:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg-body);
+}
+.newsletter-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.newsletter-status {
+  margin-top: 0.25rem;
+  color: var(--text-main);
+  font-size: 0.8125rem;
+}
+
+.mantra {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.9375rem;
+  line-height: 1.8;
+  letter-spacing: 0.01em;
+  color: var(--text-muted);
+  max-width: var(--measure);
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color);
+  margin-top: var(--section-y);
+}
+
+/* --------------------------------------------------------------------------
+   12. Contact form
+   -------------------------------------------------------------------------- */
+.form {
+  margin-top: 1.75rem;
+  max-width: 34rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+  padding: clamp(1.25rem, 1rem + 1.5vw, 1.75rem);
+}
+
+.field { margin-bottom: 1.25rem; }
+.field:last-of-type { margin-bottom: 1.5rem; }
+
+.field label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-main);
+  margin-bottom: 0.45rem;
+}
+.field .req {
+  color: var(--accent);
+  margin-left: 0.15rem;
+}
+
+.field input,
+.field textarea,
+.field select {
+  display: block;
+  width: 100%;
+  background-color: var(--bg-input);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+  padding: 0.7rem 0.8rem;
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  line-height: 1.5;
+  min-height: 2.75rem;
+  transition: border-color 0.15s ease;
+}
+
+.field select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2364FFDA' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  padding-right: 2.25rem;
+  cursor: pointer;
+}
+.field select option {
+  background-color: var(--bg-input);
+  color: var(--text-main);
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 8rem;
+}
+
+.field input:hover,
+.field textarea:hover,
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  border-color: var(--accent);
+}
+
+.field-hint {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.form-note {
+  margin-top: 1rem;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.form .btn { cursor: pointer; width: 100%; }
+@media (min-width: 480px) {
+  .form .btn { width: auto; min-width: 12rem; }
+}
+
+.contact-direct {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  max-width: var(--measure);
+}
+
+/* --------------------------------------------------------------------------
+   13. Footer
+   -------------------------------------------------------------------------- */
+.site-footer {
+  background-color: var(--bg-card)var(--bg-card) 70%;
+  background-image: none;
+  border-top: 1px solid var(--border-color);
+  padding-block: clamp(2.5rem, 1.5rem + 3vw, 4rem) 2rem;
+  margin-top: 0;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+@media (min-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1.6fr 1fr 1fr;
+    gap: 2.5rem;
+  }
+}
+
+.footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 0.9rem;
+  color: var(--text-main);
+  text-decoration: none;
+}
+.footer-brand:hover { text-decoration: none; }
+.footer-brand .brand-mark { width: 2rem; height: 2rem; }
+
+.footer-tagline {
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--text-muted);
+  max-width: 34ch;
+}
+
+.footer-heading {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.9rem;
+}
+
+.footer-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.footer-list a {
+  color: var(--text-main);
+  font-size: 0.875rem;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 1px;
+}
+.footer-list a:hover {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom-color: var(--accent);
+}
+.footer-list a[aria-current="page"] { color: var(--accent); }
+
+.footer-bottom {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.footer-bottom p {
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+
+/* --------------------------------------------------------------------------
+   13b. Footer newsletter
+   -------------------------------------------------------------------------- */
+.footer-newsletter {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.footer-newsletter-label {
+  display: block;
+  color: var(--text-main);
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.footer-newsletter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  max-width: 32rem; /* Constrains the input and button so they don't stretch full width */
+}
+
+.footer-newsletter-input {
+  flex: 1 1 16rem;
+  min-width: 0;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+  background-color: var(--bg-input);
+  color: var(--text-main);
+  font-family: var(--font-ui);
+  font-size: 0.9375rem;
+  transition: border-color 180ms ease;
+}
+
+.footer-newsletter-input::placeholder {
+  color: var(--text-muted);
+}
+
+.footer-newsletter-input:hover {
+  border-color: var(--accent);
+}
+
+.footer-newsletter-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-color: var(--accent);
+}
+
+.footer-newsletter-button {
+  flex: 0 0 auto;
+  padding: 0.8rem 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--text-main);
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 180ms ease, border-color 180ms ease, background-color 180ms ease;
+}
+
+.footer-newsletter-button:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg-body);
+}
+
+.footer-newsletter-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.footer-newsletter-status {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+  min-height: 1.2em;
+}
+/* --------------------------------------------------------------------------
+   14. Article page
+   -------------------------------------------------------------------------- */
+.page-article {
+  background-color: var(--bg-body);
+  color: var(--text-main);
+}
+
+.article-head {
+  padding-block: clamp(2.5rem, 1.5rem + 4vw, 4.5rem) clamp(1.5rem, 1rem + 2vw, 2.5rem);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.article-head-inner {
+  max-width: var(--measure);
+  margin-inline: auto;
+}
+
+.article-kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+.article-kicker::before {
+  content: "";
+  display: block;
+  width: 1.75rem;
+  height: 2px;
+  background: var(--accent);
+  flex: 0 0 auto;
+}
+
+.article-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.75rem, 1.2rem + 2.6vw, 3rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--text-main);
+  text-wrap: balance;
+}
+
+.article-standfirst {
+  margin-top: 1.25rem;
+  font-family: var(--font-serif);
+  text-align: justify;
+  font-size: clamp(1rem, 0.95rem + 0.4vw, 1.125rem);
+  line-height: 1.7;
+  color: var(--text-muted);
+  max-width: var(--measure);
+}
+
+.article-head .card-meta { margin-top: 1.75rem; }
+
+.article-body {
+  padding-block: clamp(2rem, 1.4rem + 3vw, 3.5rem) clamp(2.5rem, 1.5rem + 3vw, 4rem);
+  text-align: justify;
+}
+.article-body .prose {
+  max-width: var(--measure);
+  margin-inline: auto;
+  font-family: var(--font-serif);
+  font-size: clamp(1rem, 0.97rem + 0.25vw, 1.0625rem);
+  line-height: 1.8;
+  color: var(--text-main);
+}
+.article-body .prose > p { color: var(--text-main); }
+.article-body .lede {
+  font-family: var(--font-serif);
+  font-size: clamp(1.125rem, 1.05rem + 0.45vw, 1.25rem);
+  line-height: 1.72;
+  color: var(--text-main);
+}
+
+.article-body h2 {
+  font-family: var(--font-ui);
+  font-size: clamp(1.25rem, 1.05rem + 0.9vw, 1.625rem);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.012em;
+  color: var(--text-main);
+  margin-block: 2.5rem 1rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border-color);
+  scroll-margin-top: 5rem;
+}
+.article-body h2:first-of-type { margin-top: 1rem; }
+
+.article-body a {
+  color: var(--text-main);
+  border-bottom: 1px solid var(--accent);
+}
+.article-body a:hover {
+  text-decoration: none;
+  border-bottom-color: var(--text-main);
+}
+.article-body strong { color: var(--text-main); font-weight: 700; }
+.article-body em { font-style: italic; }
+.article-body hr {
+  border-top-color: var(--border-color);
+  margin-block: 2.5rem;
+}
+
+.takeaway {
+  margin-block: 2.75rem 0;
+  background-color: var(--bg-card);
+  background-image: none;
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent);
+  border-radius: 2px;
+  padding: clamp(1.25rem, 1rem + 1.5vw, 2rem);
+}
+.takeaway h2 {
+  margin: 0 0 1rem;
+  padding-top: 0;
+  border-top: 0;
+  font-family: var(--font-ui);
+  font-size: clamp(1.0625rem, 0.98rem + 0.5vw, 1.25rem);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.takeaway ul {
+  margin: 0;
+  padding-left: 1.15rem;
+  list-style: none;
+}
+.takeaway li {
+  position: relative;
+  margin-bottom: 0.9rem;
+  padding-left: 0.35rem;
+  color: var(--text-main);
+  font-size: 0.9375rem;
+  line-height: 1.72;
+}
+.takeaway li::before {
+  content: "";
+  position: absolute;
+  left: -1rem;
+  top: 0.62em;
+  width: 0.4rem;
+  height: 0.4rem;
+  background: var(--accent);
+  border-radius: 50%;
+}
+.takeaway li:last-child { margin-bottom: 0; }
+
+.takeaway-close {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.sources {
+  margin-block: 2.75rem 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  text-align: left;
+}
+.sources h2 {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 1rem;
+  padding-top: 0;
+  border-top: 0;
+}
+.sources ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.7rem;
+}
+.sources li {
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  color: var(--text-muted);
+  padding-left: 1.1rem;
+  position: relative;
+  overflow-wrap: anywhere;
+}
+.sources li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.66em;
+  width: 0.4rem;
+  height: 1px;
+  background: color-mix(in srgb, var(--bg-body) 30%, transparent);
+}
+.sources a {
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--accent);
+  word-break: break-word;
+}
+.sources a:hover {
+  color: var(--text-main);
+  text-decoration: none;
+}
+
+.disclaimer {
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  color: var(--text-muted);
+  font-style: italic;
+  max-width: var(--measure);
+  margin-inline: auto;
+  padding-block: 1.75rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.return-links {
+  max-width: var(--measure);
+  margin-inline: auto;
+  padding-bottom: clamp(2.5rem, 1.5rem + 3vw, 4rem);
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+.return-links a {
+  color: var(--text-main);
+  border-bottom: 1px solid var(--accent);
+}
+.return-links a:hover {
+  text-decoration: none;
+  border-bottom-color: var(--text-main);
+}
+.return-links span {
+  color: color-mix(in srgb, var(--bg-body) 30%, transparent);
+  margin-inline: 0.4rem;
+}
+
+/* --------------------------------------------------------------------------
+   15. Two-column intro (homepage)
+   -------------------------------------------------------------------------- */
+.side-by-side-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+@media (min-width: 768px) {
+  .side-by-side-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+}
+
+.intro-column .section-title {
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.intro-column .prose { max-width: none; }
+.intro-column .lede {
+  font-size: 1.25rem;
+  color: var(--text-main);
+  margin-bottom: 1rem;
+}
+
+/* --------------------------------------------------------------------------
+   16. Motion + print
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .card:hover,
+  .card:focus-within,
+  .btn:hover,
+  .hero-cta:hover { transform: none; }
+}
+
+@media print {
+  .site-header,
+  .site-footer,
+  .skip-link,
+  .return-links,
+  .cta-line { display: none !important; }
+
+  body,
+  .page-article,
+  .article-body .prose {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .article-body a,
+  .sources a {
+    color: #000 !important;
+    border-bottom: 0 !important;
+  }
+
+  .takeaway {
+    border: 1px solid #999 !important;
+    border-left: 3px solid #000 !important;
+  }
+
+  .article-body h2 { break-after: avoid; }
+  .sources li { break-inside: avoid; }
+}
+
+/* --------------------------------------------------------------------------
+   14b. Article sidebar layout
+   -------------------------------------------------------------------------- */
+.article-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
+  align-items: start;
+  padding-block: clamp(2rem, 1.4rem + 3vw, 3.5rem);
+}
+
+/* Override the centered prose so it fills the left column */
+.article-layout .article-body {
+  padding-block: 0; /* Padding is now handled by the layout wrapper */
+}
+.article-layout .prose {
+  margin-inline: 0;
+  max-width: var(--measure);
+}
+
+/* Table of Contents styling */
+.toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+.toc-list a {
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  display: block;
+}
+.toc-list a:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+.toc-list a.active {
+  color: var(--text-main);
+  font-weight: 600;
+  border-left: 2px solid var(--accent);
+  padding-left: 0.5rem;
+  margin-left: -0.5rem;
+}
+
+/* Compact Article Index */
+.article-index-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 1rem;
+}
+.article-index-list a {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 0.9375rem;
+  line-height: 1.3;
+  color: var(--text-main);
+}
+.article-index-list a:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+.article-index-list span {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
+
+@media (min-width: 1024px) {
+  .article-layout {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 4rem;
+  }
+  .article-layout .sidebar {
+    position: sticky;
+    top: 6rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   11b. Ledger Filters
+   -------------------------------------------------------------------------- */
+.ledger-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.filter-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+  border-color: var(--accent);
+  color: var(--text-main);
+}
+
+.filter-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg-body);
+}
+
+:root,
+[data-theme="FibiOS"] {
+  --bg-body: #0A192F;
+  --bg-card: #112240;
+  --bg-input: #0A192F;
+  --text-main: #CCD6F6;
+  --text-muted: #8892B0;
+  --border-color: #233554;
+  --accent: #64FFDA;
+
+  /* NEW SEMANTIC COLORS */
+  --color-success: #22C55E;
+  --color-neutral: #94A3B8;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+}
+
+[data-theme="light"] {
+  --bg-body: #F8F9FA;
+  --bg-card: #FFFFFF;
+  --bg-input: #F8F9FA;
+  --text-main: #0A192F;
+  --text-muted: #4A5A7A;
+  --border-color: #E2E8F0;
+  --accent: #0A192F;
+
+  /* NEW SEMANTIC COLORS */
+  --color-success: #16A34A;
+  --color-neutral: #64748B;
+  --color-warning: #D97706;
+  --color-danger: #DC2626;
+}
+
+[data-theme="dark"] {
+  --bg-body: #050505;
+  --bg-card: #121212;
+  --bg-input: #050505;
+  --text-main: #F8F9FA;
+  --text-muted: #A0A0A0;
+  --border-color: #333333;
+  --accent: #64FFDA;
+
+  /* NEW SEMANTIC COLORS */
+  --color-success: #22C55E;
+  --color-neutral: #94A3B8;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+}
+
+/* ==========================================================================
+   Dev Mode - Layout Editor
+   ========================================================================== */
+body.dev-layout-mode #main > section,
+body.dev-layout-mode #main > div.article-layout {
+  border: 2px dashed var(--accent);
+  position: relative;
+  cursor: grab;
+  padding-top: 2rem !important;
+  margin-bottom: 2rem;
+}
+
+body.dev-layout-mode #main > section:active,
+body.dev-layout-mode #main > div.article-layout:active {
+  cursor: grabbing;
+}
+
+/* The drag handle */
+body.dev-layout-mode #main > section::before,
+body.dev-layout-mode #main > div.article-layout::before {
+  content: "☰ Drag to reorder";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: var(--bg-body);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.2rem 1rem;
+  border-radius: 0 0 4px 4px;
+  font-family: var(--font-ui);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  z-index: 10;
+}
+
+/* Make text editable on hover */
+body.dev-layout-mode h1,
+body.dev-layout-mode h2,
+body.dev-layout-mode h3,
+body.dev-layout-mode p,
+body.dev-layout-mode span.tag,
+body.dev-layout-mode a.btn {
+  outline: 1px dashed transparent;
+  transition: outline 0.2s;
+}
+
+body.dev-layout-mode h1:hover,
+body.dev-layout-mode h2:hover,
+body.dev-layout-mode h3:hover,
+body.dev-layout-mode p:hover,
+body.dev-layout-mode span.tag:hover,
+body.dev-layout-mode a.btn:hover {
+  outline-color: rgba(100, 255, 218, 0.4);
+  background-color: rgba(100, 255, 218, 0.05);
+}
+
+body.dev-layout-mode .is-dragging {
+  opacity: 0.4;
+  border: 2px solid var(--accent) !important;
+  background-color: var(--bg-card);
+}
+
+/* ==========================================================================
+   Dev Mode - Compact Layout & Color Fix
+   ========================================================================== */
+.dev-panel-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-bottom: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .dev-panel-grid {
+    grid-template-columns: repeat(10, 1fr);
+  }
+}
+
+.dev-color-label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+/* Fix the color picker rendering */
+#dev-panel input[type="color"] {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  width: 100%;
+  height: 28px;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Target the internal swatch for WebKit (Chrome/Safari/Edge) */
+#dev-panel input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+#dev-panel input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 3px;
+}
+
+/* Target the internal swatch for Firefox */
+#dev-panel input[type="color"]::-moz-color-swatch {
+  border: none;
+  border-radius: 3px;
+}
+/* ==========================================================================
+   Dev Mode - Factory Guides & Drag Placeholder
+   ========================================================================== */
+body.factory-mode #main *:not(script):not(style) {
+  outline: 1px dashed rgba(100, 255, 218, 0.15); /* Faint guide */
+  outline-offset: -1px;
+}
+
+body.factory-mode #main *:hover {
+  outline: 1px dashed var(--accent) !important;
+  background-color: rgba(100, 255, 218, 0.03);
+}
+
+/* The solid outline when an element is selected */
+.dev-element-selected {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: -2px;
+  box-shadow: 0 0 0 4px rgba(100, 255, 218, 0.2) !important;
+  z-index: 10;
+}
+
+/* Hide all guides while actively dragging to see the reflow */
+body.is-dragging #main * {
+  outline: none !important;
+  background-color: transparent !important;
+}
+
+/* The dashed placeholder that shows where it will drop */
+.drag-placeholder {
+  border: 2px dashed var(--accent) !important;
+  background-color: rgba(100, 255, 218, 0.08) !important;
+  border-radius: 4px;
+  margin: 0.5rem 0;
+  pointer-events: none;
+}
+
+/* Hide the original element while it is being dragged */
+.is-dragging {
+  opacity: 0.2;
+  filter: grayscale(100%);
+}
+
+/* ==========================================================================
+   Dev Mode - Sidebar Layout & Premium Controls
+   ========================================================================== */
+
+/* 1. Squeeze the website when the panel is open */
+body {
+  transition: padding-right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+body.dev-panel-open {
+  padding-right: 340px;
+}
+
+/* 2. Custom Toggle Switches */
+.toggle-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: var(--text-main);
+  user-select: none;
+}
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+.toggle-slider {
+  width: 38px;
+  height: 22px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  position: relative;
+  transition: 0.3s;
+  flex-shrink: 0;
+}
+.toggle-slider::before {
+  content: "";
+  position: absolute;
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  top: 3px;
+  background-color: var(--text-muted);
+  border-radius: 50%;
+  transition: 0.3s;
+}
+.toggle-switch input:checked + .toggle-slider {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(16px);
+  background-color: var(--bg-body);
+}
+
+/* 3. Compact Color List */
+/* Compact 5x2 Color Grid */
+.dev-color-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.dev-color-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.dev-color-item span {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.dev-color-item input[type="color"] {
+  width: 100%;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.dev-color-item input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+.dev-color-item input[type="color"]::-webkit-color-swatch { border: none; border-radius: 3px; }
+.dev-color-item input[type="color"]::-moz-color-swatch { border: none; border-radius: 3px; }
+
+
+/* 4. Typography Controls */
+.typo-btn {
+  flex: 1;
+  padding: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.typo-btn:hover, .typo-btn.active {
+  background: var(--accent);
+  color: var(--bg-body);
+  border-color: var(--accent);
+}
+.size-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 26px;
+}
+.typo-btn-mini {
+  flex: 1;
+  padding: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.typo-btn-mini:hover {
+  background: var(--accent);
+  color: var(--bg-body);
+  border-color: var(--accent);
+}
+
+
+/* ==========================================================================
+   About Page - Immersive Editorial Layout
+   ========================================================================== */
+
+/* 1. Scroll Reveal Animations */
+.js-enabled .reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s cubic-bezier(0.25, 0.8, 0.25, 1), 
+              transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.js-enabled .reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* Stagger delays for grid items */
+.js-enabled .reveal-delay-1 { transition-delay: 0.1s; }
+.js-enabled .reveal-delay-2 { transition-delay: 0.2s; }
+.js-enabled .reveal-delay-3 { transition-delay: 0.3s; }
+
+/* 2. Editorial Split Layout */
+.editorial-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  margin-top: 2rem;
+}
+@media (min-width: 768px) {
+  .editorial-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+}
+
+.editorial-box {
+  border-top: 2px solid var(--accent);
+  padding-top: 1.5rem;
+}
+.editorial-box h3 {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-main);
+}
+.editorial-box p {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+
+/* 3. Pillar Display Cards (About Page) */
+.about-pillar-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+@media (min-width: 900px) {
+  .about-pillar-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.about-pillar-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 2rem;
+  border-radius: 2px;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+.about-pillar-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent);
+}
+.about-pillar-card h3 {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+}
+.about-pillar-card .pillar-type {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+.about-pillar-card p {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* 4. Hero Glow Effect */
+.about-hero-glow {
+  position: relative;
+}
+.about-hero-glow::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vw;
+  height: 80vh;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 5%, transparent) 0%, transparent 60%);
+  z-index: -1;
+  pointer-events: none;
+}
+/* ==========================================================================
+   About Page - Compact Editorial Layout
+   ========================================================================== */
+
+/* Override default section padding for this page to tighten the flow */
+.about-page .section {
+  padding-block: clamp(2rem, 1rem + 4vw, 4rem);
+}
+.about-page #main > .section:first-child {
+  border-top: 0;
+}
+
+/* ==========================================================================
+   About Page - Fluid Magazine Grid
+   ========================================================================== */
+
+/* Mobile First: Stack everything on top of each other */
+.about-magazine-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+/* Tablet & Desktop: Split into two columns */
+@media (min-width: 900px) {
+  .about-magazine-grid {
+    /* 
+       Left column (Sidebar): Minimum 280px, Maximum 340px.
+       Right column (Narrative): Fills the rest of the available space.
+    */
+    grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+    gap: 4rem;
+  }
+}
+
+/* Left Column: The Narrative */
+.about-narrative {
+  max-width: 65ch;
+}
+.about-narrative p {
+  margin-bottom: 1.5rem;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--text-main);
+}
+.about-narrative .lede {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  line-height: 1.5;
+  color: var(--text-main);
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+/* Right Column: The Taxonomy / Pillars */
+.about-taxonomy {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-top: 3px solid var(--accent);
+  padding: 2.5rem;
+  border-radius: 2px;
+}
+
+.about-taxonomy h3 {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}
+
+.taxonomy-item {
+  margin-bottom: 2rem;
+}
+.taxonomy-item:last-child {
+  margin-bottom: 0;
+}
+
+.taxonomy-item h4 {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.taxonomy-item h4::before {
+  content: "";
+  display: block;
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.taxonomy-item p {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin-left: 1rem;
+}
+
+/* The Standards Grid (Hold to / Refuse) */
+.about-standards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 2rem;
+}
+@media (min-width: 768px) {
+  .about-standards {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+}
+
+.about-standard-box h3 {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  color: var(--text-main);
+  margin-bottom: 1.25rem;
+}
+.about-standard-box p {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+/* The Compact Statement */
+.about-statement {
+  background: color-mix(in srgb, var(--bg-card) 50%, transparent);
+  border-left: 2px solid var(--accent);
+  padding: 2rem;
+  margin-top: 3rem;
+}
+.about-statement p {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: var(--text-main);
+  margin-bottom: 1rem;
+}
+.about-statement p:last-child {
+  margin-bottom: 0;
+}
+
+/* ==========================================================================
+   About Page - Right Column Stacking
+   ========================================================================== */
+
+.about-sidebar-column {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* Spacing between the Pillars box and the Statement box */
+}
+
+/* Adjust the statement box for the narrower column */
+.about-sidebar-column .about-statement {
+  margin-top: 0; /* Reset the old full-width margin */
+  padding: 2rem; /* Slightly tighter padding for the column */
+  background: var(--bg-card); /* Match the taxonomy box background */
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent); /* Keep the accent stripe */
+}
+
+/* Ensure the buttons stack nicely if the column gets too narrow */
+.about-sidebar-column .cta-line {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.about-sidebar-column .btn {
+  width: 100%;
+  text-align: center;
+}
+
+.about-sidebar-column .text-link {
+  padding-left: 0 !important;
+}
+
+/* ==========================================================================
+   About Page - Editorial Standards Cards
+   ========================================================================== */
+
+.about-standards-wrap {
+  margin-top: 3rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 2rem;
+}
+
+.standards-heading {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 1.25rem;
+}
+
+/* The Grid */
+.standards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 640px) {
+  .standards-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* The Individual Card */
+.standard-card {
+  background: var(--bg-body);
+  border: 1px solid var(--border-color);
+  padding: 1.25rem;
+  border-radius: 2px;
+  /* Update this line to include background-color */
+  transition: border-color 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+}
+
+.standard-card:hover {
+  transform: translateY(-2px);
+}
+
+.standard-card h4 {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.standard-card p {
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin-bottom: 0;
+}
+
+/* --- Anaphora (What we hold to - GREEN) --- */
+.standard-card.is-hold:hover {
+  border-color: var(--accent);
+  /* Adds a subtle 6% green tint to the background */
+  background-color: color-mix(in srgb, var(--accent) 6%, var(--bg-body));
+}
+.standard-card.is-hold h4::before {
+  content: "✓";
+  color: var(--accent);
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+/* --- Chora (The Middle Ground - GOLD) --- */
+.standards-heading.is-chora {
+  color: var(--color-warning);
+}
+.standard-card.is-chora:hover {
+  border-color: var(--color-warning);
+  /* Adds a subtle 6% gold tint */
+  background-color: color-mix(in srgb, var(--color-warning) 6%, var(--bg-body));
+}
+.standard-card.is-chora h4::before {
+  content: "◆";
+  color: var(--color-warning);
+  font-family: var(--font-ui);
+  font-size: 0.6rem;
+  font-weight: normal;
+}
+
+/* --- Kataphora (What we refuse - RED) --- */
+.standard-card.is-refuse:hover {
+  border-color: var(--color-danger);
+  /* Adds a subtle 6% red tint */
+  background-color: color-mix(in srgb, var(--color-danger) 6%, var(--bg-body));
+}
+.standard-card.is-refuse h4::before {
+  content: "✕";
+  color: var(--color-danger);
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+
+/* ==========================================================================
+   About Page - Two-Column Masthead
+   ========================================================================== */
+
+.about-hero-split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .about-hero-split {
+    grid-template-columns: 1.2fr 0.8fr; /* Left side slightly wider */
+    gap: 5rem;
+  }
+}
+
+/* Left Side Text */
+.about-hero-left .hero-title {
+  font-size: clamp(2.5rem, 1.5rem + 3vw, 3.5rem); /* Smaller than before */
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+
+.about-hero-left .hero-sub {
+  font-family: var(--font-ui);
+  font-size: clamp(1rem, 0.95rem + 0.5vw, 1.25rem);
+  color: var(--text-muted);
+  line-height: 1.6;
+  max-width: 50ch;
+}
+
+/* Right Side Manifesto Box */
+.about-manifesto-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent);
+  padding: 2.5rem;
+  border-radius: 2px;
+  box-shadow: 0 10px 30px -20px rgba(0,0,0,0.5);
+}
+
+.about-manifesto-box p {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+  line-height: 1.6;
+  color: var(--text-main);
+  margin: 0;
+}
+
+@charset "UTF-8";
+/* ==========================================================================
+   FibiOS — FibiOS.com
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Tokens & Themes
+   -------------------------------------------------------------------------- */
+:root, [data-theme="FibiOS"] {
+  --bg-body: #0A192F;
+  --bg-card: #112240;
+  --bg-input: #0A192F;
+  --text-main: #CCD6F6;
+  --text-muted: #8892B0;
+  --border-color: #233554;
+  --accent: #64FFDA;
+  
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+
+  --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "Merriweather", Georgia, "Times New Roman", serif;
+  --wrap: 1160px;
+  --measure: 68ch;
+  --gutter: 1.5rem;
+  --section-y: clamp(3rem, 1.6rem + 6vw, 6rem);
+}
+
+[data-theme="light"] {
+  --bg-body: #F8F9FA;
+  --bg-card: #FFFFFF;
+  --bg-input: #F8F9FA;
+  --text-main: #0A192F;
+  --text-muted: #4A5A7A;
+  --border-color: #E2E8F0;
+  --accent: #0A192F;
+  
+  --color-success: #16A34A;
+  --color-warning: #D97706;
+  --color-danger: #DC2626;
+}
+
+[data-theme="dark"] {
+  --bg-body: #050505;
+  --bg-card: #121212;
+  --bg-input: #050505;
+  --text-main: #F8F9FA;
+  --text-muted: #A0A0A0;
+  --border-color: #333333;
+  --accent: #64FFDA;
+  
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+}
+
+@media (min-width: 640px) { :root { --gutter: 2rem; } }
+@media (min-width: 900px) { :root { --gutter: 2.5rem; } }
+
+/* --------------------------------------------------------------------------
+   2. Reset & Base
+   -------------------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body, h1, h2, h3, h4, p, figure, blockquote, ul, ol, dl, dd { margin: 0; }
+ul[role="list"], ol[role="list"] { list-style: none; padding: 0; }
+img, picture, svg { display: block; max-width: 100%; height: auto; }
+button, input, textarea, select { font: inherit; color: inherit; }
+
+body, .page-article {
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  background-image: radial-gradient(var(--border-color) 1px, transparent 1.6px);
+  background-size: 24px 24px;
+  background-attachment: fixed;
+  font-family: var(--font-ui);
+  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+[data-theme="light"] body, [data-theme="light"] .page-article {
+  background-image: radial-gradient(color-mix(in srgb, var(--border-color) 45%, var(--text-muted)) 1px, transparent 1.6px);
+}
+
+a { color: var(--text-main); text-decoration: none; transition: color 0.15s; }
+a:hover { color: var(--accent); text-decoration: underline; }
+strong, b { font-weight: 600; color: var(--text-main); }
+hr { border: 0; border-top: 1px solid var(--border-color); margin: 2.5rem 0; }
+::selection { background: var(--accent); color: var(--bg-body); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* --------------------------------------------------------------------------
+   3. Utilities & Layout
+   -------------------------------------------------------------------------- */
+.wrap { width: 100%; max-width: var(--wrap); margin-inline: auto; padding-inline: var(--gutter); }
+.skip-link { position: absolute; top: 0; left: 0; transform: translateY(-120%); background: var(--accent); color: var(--bg-body); padding: 0.75rem 1.25rem; z-index: 200; }
+.skip-link:focus { transform: translateY(0); }
+.visually-hidden { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.section { padding-block: var(--section-y); border-top: 1px solid var(--border-color); scroll-margin-top: 5.5rem; }
+#main > .section:first-child, #main > .hero + .section { border-top: 0; }
+.section-head { margin-bottom: clamp(1.75rem, 1rem + 2vw, 2.75rem); }
+.section-title { font-family: var(--font-serif); font-size: clamp(1.375rem, 1.1rem + 1.1vw, 1.875rem); font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; }
+
+/* --------------------------------------------------------------------------
+   4. Header & Navigation
+   -------------------------------------------------------------------------- */
+.site-header {
+  position: sticky; top: 0; z-index: 100; width: 100%;
+  background-color: var(--bg-body); border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.3s ease;
+}
+
+.header-inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4.25rem; padding-block: 0.75rem; }
+
+.brand { display: inline-flex; align-items: center; gap: 0.7rem; color: var(--text-main); text-decoration: none; }
+.brand-mark { width: 2.5rem; height: 2.5rem; border-radius: 50%; border: 1px solid var(--border-color); object-fit: cover; }
+.brand-name { font-family: var(--font-ui); font-size: 1.0625rem; font-weight: 600; letter-spacing: 0.22em; text-transform: none; }
+.brand-name::after { content: ""; display: block; height: 1px; width: 100%; background: var(--accent); margin-top: 0.15rem; }
+
+.nav-toggle { display: none; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem; background: transparent; border: 1px solid var(--border-color); border-radius: 2px; cursor: pointer; }
+.nav-toggle-bars { position: relative; display: block; width: 1.125rem; height: 2px; background: var(--text-main); }
+.nav-toggle-bars::before, .nav-toggle-bars::after { content: ""; position: absolute; left: 0; width: 1.125rem; height: 2px; background: var(--text-main); transition: 0.2s; }
+.nav-toggle-bars::before { top: -6px; } .nav-toggle-bars::after { top: 6px; }
+
+.primary-nav { display: none; position: absolute; top: 100%; left: 0; right: 0; padding-inline: var(--gutter); background: var(--bg-body); border-bottom: 1px solid var(--border-color); box-shadow: 0 1rem 2rem rgba(2,12,27,0.55); }
+.primary-nav.is-open { display: block; }
+.primary-nav ul { display: flex; flex-direction: column; list-style: none; padding: 0.5rem 0 1rem; border-top: 1px solid var(--border-color); }
+.primary-nav a { display: block; padding: 0.7rem 0.25rem; font-size: 0.8125rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; border-bottom: 2px solid transparent; }
+.primary-nav a[aria-current="page"] { color: var(--accent); border-bottom-color: var(--border-color); }
+
+@media (min-width: 640px) {
+  .nav-toggle { display: none; }
+  .primary-nav { display: block; position: static; padding: 0; background: transparent; border: 0; box-shadow: none; margin-left: auto; }
+  .primary-nav ul { flex-direction: row; gap: 1.25rem; border-top: 0; padding-block: 0; }
+  .primary-nav a { padding: 0.35rem 0; font-size: 0.75rem; }
+}
+
+/* Theme Switch */
+.theme-switch { display: inline-flex; align-items: center; gap: 2px; padding: 2px; border: 1px solid var(--border-color); border-radius: 999px; background-color: var(--bg-card); flex: 0 0 auto; }
+.theme-switch-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; min-width: 2rem; min-height: 2.5rem; padding: 0; border: 1px solid transparent; border-radius: 999px; background: transparent; color: var(--text-muted); font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: 0.15s; }
+.theme-switch-btn:hover { color: var(--text-main); }
+[data-theme="light"] .theme-switch-btn[data-set-theme="light"],
+[data-theme="FibiOS"] .theme-switch-btn[data-set-theme="FibiOS"],
+[data-theme="dark"] .theme-switch-btn[data-set-theme="dark"] { color: var(--text-main); background-color: var(--bg-body); border-color: var(--border-color); }
+.theme-swatch { display: block; width: 0.625rem; height: 0.625rem; border-radius: 50%; border: 1px solid var(--border-color); }
+.theme-swatch--light { background-color: #F8F9FA; } .theme-swatch--FibiOS { background-color: #0A192F; } .theme-swatch--dark { background-color: #050505; }
+.theme-switch-label { display: none; }
+
+@media (max-width: 639px) { .theme-switch { margin-left: auto; order: 2; } .nav-toggle { order: 3; } }
+@media (min-width: 640px) { .theme-switch { margin-left: 1rem; } .theme-switch-btn { min-height: 1.75rem; } }
+@media (min-width: 768px) { .theme-switch-btn { min-width: 0; padding: 0 0.6rem; } .theme-switch-label { display: inline; } }
+
+/* --------------------------------------------------------------------------
+   5. Hero & Layout Components
+   -------------------------------------------------------------------------- */
+.hero { width: 100%; padding-block: clamp(4rem, 2rem + 8vw, 8rem); background-color: #0A192F; border-bottom: 1px solid #233554; }
+@media (min-width: 900px) { .hero { background-image: url("../img/hero.png"); background-repeat: no-repeat; background-size: cover; background-position: 74% 50%; background-blend-mode: multiply; } }
+.hero-kicker { display: inline-flex; align-items: center; gap: 0.75rem; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #CCD6F6; margin-bottom: 1.25rem; }
+.hero-kicker::before { content: ""; width: 1.75rem; height: 1px; background: rgba(100, 255, 218, 0.32); }
+.hero-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 1.4rem + 5.5vw, 5rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; color: #FFFFFF; margin-bottom: 1.5rem; }
+.hero-sub { font-family: var(--font-ui); font-size: clamp(1.125rem, 1rem + 1vw, 1.375rem); line-height: 1.6; color: #CCD6F6; max-width: 56ch; margin-bottom: 2.5rem; }
+.hero-cta { display: inline-block; padding: 1rem 1.9rem; border-radius: 2px; font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #FFFFFF; background: transparent; border: 1px solid rgba(204, 214, 246, 0.3); transition: 0.2s; }
+.hero-cta:hover { color: #64FFDA; border-color: #64FFDA; background-color: rgba(100, 255, 218, 0.08); transform: translateY(-1px); text-decoration: none; }
+.hero-latest { margin-top: 3.5rem; }
+.hero-latest-title { font-family: var(--font-serif); font-size: 1rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #8892B0; margin-bottom: 1.5rem; }
+
+/* About Page Editorial Layout (Global) */
+.about-hero-split { display: grid; grid-template-columns: 1fr; gap: 3rem; align-items: center; }
+@media (min-width: 900px) { .about-hero-split { grid-template-columns: 1.2fr 0.8fr; gap: 5rem; } }
+.about-hero-left .hero-title { font-size: clamp(2.5rem, 1.5rem + 3vw, 3.5rem); line-height: 1.1; margin-bottom: 1rem; color: var(--text-main); }
+.about-hero-left .hero-sub { font-family: var(--font-ui); font-size: clamp(1rem, 0.95rem + 0.5vw, 1.25rem); color: var(--text-muted); line-height: 1.6; max-width: 50ch; }
+.about-manifesto-box { background: var(--bg-card); border: 1px solid var(--border-color); border-left: 3px solid var(--accent); padding: 2.5rem; border-radius: 2px; box-shadow: 0 10px 30px -20px rgba(0,0,0,0.5); }
+.about-manifesto-box p { font-family: var(--font-serif); font-style: italic; font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem); line-height: 1.6; color: var(--text-main); margin: 0; }
+
+.side-by-side-grid { display: grid; grid-template-columns: 1fr; gap: 3rem; }
+@media (min-width: 768px) { .side-by-side-grid { grid-template-columns: 1fr 1fr; gap: 4rem; } }
+.intro-column .section-title { margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); }
+
+/* --------------------------------------------------------------------------
+   6. Components
+   -------------------------------------------------------------------------- */
+/* Three Pillars */
+.pillar-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+@media (min-width: 768px) { .pillar-grid { grid-template-columns: repeat(3, 1fr); } }
+.pillar-card { display: block; padding: 2rem; background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 2px; text-decoration: none; transition: 0.3s; }
+.pillar-card:hover { border-color: var(--accent); transform: translateY(-3px); text-decoration: none; }
+.pillar-card h3 { font-family: var(--font-serif); font-size: 1.25rem; color: var(--text-main); margin-bottom: 1rem; }
+.pillar-card .tag { margin-bottom: 1rem; display: inline-block; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.25rem 0.6rem; border-radius: 2px; color: var(--text-muted); background-color: var(--bg-body); border: 1px solid var(--border-color); }
+.pillar-card p { font-family: var(--font-ui); font-size: 0.9375rem; line-height: 1.6; color: var(--text-muted); }
+
+/* Cards */
+.card-grid { display: grid; grid-template-columns: 1fr; gap: clamp(1.5rem, 1rem + 1.5vw, 2rem); }
+@media (min-width: 768px) { .card-grid { grid-template-columns: repeat(2, 1fr); } }
+.card { position: relative; display: flex; flex-direction: column; background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 2px; transition: 0.2s; }
+.card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 18px 40px -30px rgba(0,0,0,0.6); }
+.card-body { display: flex; flex-direction: column; flex: 1 1 auto; gap: 0.75rem; padding: clamp(1.25rem, 1rem + 1vw, 1.75rem); }
+.card-title { font-family: var(--font-serif); font-size: clamp(1.0625rem, 0.98rem + 0.5vw, 1.25rem); font-weight: 700; line-height: 1.15; }
+.card-title a { color: inherit; } .card-title a::after { content: ""; position: absolute; inset: 0; }
+.card-text { color: var(--text-muted); font-size: 0.9375rem; line-height: 1.65; flex: 1 1 auto; }
+.card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; font-size: 0.8125rem; color: var(--text-muted); }
+.card-meta > * + *::before { content: "\00b7"; margin-right: 0.5rem; color: var(--accent); }
+
+/* Ledger Filters */
+.ledger-filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+.filter-btn { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-muted); padding: 0.4rem 1rem; border-radius: 999px; font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; transition: all 0.2s ease; }
+.filter-btn:hover { border-color: var(--accent); color: var(--text-main); }
+.filter-btn.active { background: var(--accent); border-color: var(--accent); color: var(--bg-body); }
+
+/* Feed */
+.pub-layout { display: grid; grid-template-columns: 1fr; gap: 2.5rem; align-items: start; }
+@media (min-width: 1024px) { .pub-layout { grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr); } .sidebar { position: sticky; top: 5rem; } }
+.feed-item { position: relative; padding: 1.5rem 1rem; margin-inline: -1rem; border-top: 1px solid var(--border-color); transition: 0.2s; }
+.feed-item:nth-child(odd) { background-color: var(--bg-card); }
+.feed-item:nth-child(even) { background-color: color-mix(in srgb, var(--bg-card) 88%, transparent); }
+.feed-item[data-status="published"] { cursor: pointer; }
+.feed-item[data-status="published"]:hover { background-color: color-mix(in srgb, var(--bg-card) 70%, var(--border-color)); border-top-color: var(--accent); }
+.feed-title { font-family: var(--font-serif); font-size: 1.25rem; font-weight: 700; line-height: 1.3; }
+.feed-title a { color: inherit; } .feed-title a::after { content: ""; position: absolute; inset: 0; }
+.feed-dek { color: var(--text-muted); margin-top: 0.35rem; }
+.forthcoming-marker { display: inline-block; margin-left: 0.5rem; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); border: 1px solid var(--border-color); padding: 0.15rem 0.5rem; border-radius: 2px; }
+
+/* Sidebar */
+.sidebar-block { position: relative; padding: 1.5rem; background-color: var(--bg-card); border: 1px solid var(--border-color); }
+.sidebar-block::before { content: ""; position: absolute; top: 0; left: 1.5rem; width: 2.5rem; height: 2px; background: var(--accent); }
+.board-title { font-family: var(--font-serif); font-size: 1.125rem; font-weight: 700; margin-bottom: 0.75rem; }
+.board-text { color: var(--text-main); font-size: 0.9375rem; line-height: 1.6; }
+
+/* --------------------------------------------------------------------------
+   7. Typography, Forms & Footer
+   -------------------------------------------------------------------------- */
+.prose { max-width: 35rem; }
+.prose > p { margin-bottom: 1.35em; }
+.lede { font-size: clamp(1.1875rem, 1.05rem + 0.6vw, 1.4375rem); line-height: 1.55; margin-bottom: 1.5em; }
+.btn { display: inline-block; background: var(--accent); border: 1px solid var(--accent); border-radius: 2px; color: var(--bg-body); font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.1em; padding: 0.95rem 1.6rem; text-transform: uppercase; transition: 0.2s; }
+.btn:hover { background: var(--bg-card); color: var(--text-main); transform: translateY(-1px); text-decoration: none; }
+.full-width-cta { width: 100%; text-align: center; display: block; }
+
+.site-footer { background-color: var(--bg-card); border-top: 1px solid var(--border-color); padding-block: 4rem 2rem; }
+.footer-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+@media (min-width: 768px) { .footer-grid { grid-template-columns: 1.6fr 1fr 1fr; } }
+.footer-brand { display: inline-flex; align-items: center; gap: 0.7rem; margin-bottom: 0.9rem; color: var(--text-main); }
+.footer-tagline { font-size: 0.875rem; line-height: 1.65; color: var(--text-muted); max-width: 34ch; }
+.footer-heading { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.9rem; }
+.footer-list { list-style: none; padding: 0; display: grid; gap: 0.5rem; }
+.footer-list a { font-size: 0.875rem; color: var(--text-main); }
+.footer-bottom { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); }
+
+/* Footer Newsletter */
+.footer-newsletter { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-color); }
+.footer-newsletter-label { display: block; color: var(--text-main); font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.75rem; }
+.footer-newsletter-row { display: flex; flex-wrap: wrap; gap: 0.5rem; max-width: 32rem; }
+.footer-newsletter-input { flex: 1 1 16rem; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 2px; background-color: var(--bg-input); color: var(--text-main); font-size: 0.9375rem; transition: border-color 180ms; }
+.footer-newsletter-input:focus-visible { outline: 2px solid var(--accent); border-color: var(--accent); }
+.footer-newsletter-button { padding: 0.8rem 1.5rem; border: 1px solid var(--border-color); border-radius: 2px; background: transparent; color: var(--text-main); font-size: 0.8125rem; font-weight: 600; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
+.footer-newsletter-button:hover { background: var(--accent); border-color: var(--accent); color: var(--bg-body); }
+.footer-newsletter-status { font-size: 0.8125rem; color: var(--text-muted); margin-top: 0.5rem; }
+
+/* --------------------------------------------------------------------------
+   8. Dev Mode Panel Styling
+   -------------------------------------------------------------------------- */
+.toggle-switch { position: relative; display: inline-flex; align-items: center; cursor: pointer; gap: 10px; font-size: 0.85rem; color: var(--text-main); user-select: none; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+.toggle-slider { width: 38px; height: 22px; background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; position: relative; transition: 0.3s; flex-shrink: 0; }
+.toggle-slider::before { content: ""; position: absolute; height: 14px; width: 14px; left: 3px; top: 3px; background-color: var(--text-muted); border-radius: 50%; transition: 0.3s; }
+.toggle-switch input:checked + .toggle-slider { background-color: var(--accent); border-color: var(--accent); }
+.toggle-switch input:checked + .toggle-slider::before { transform: translateX(16px); background-color: var(--bg-body); }
+
+.dev-color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 10px; }
+.dev-color-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.dev-color-item span { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; text-align: center; line-height: 1.1; }
+.dev-color-item input[type="color"] { width: 100%; height: 24px; padding: 0; border: 1px solid var(--border-color); border-radius: 4px; cursor: pointer; background: transparent; appearance: none; -webkit-appearance: none; }
+.dev-color-item input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+.dev-color-item input[type="color"]::-webkit-color-swatch { border: none; border-radius: 3px; }
+
+.typo-btn { flex: 1; padding: 6px; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 4px; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+.typo-btn:hover, .typo-btn.active { background: var(--accent); color: var(--bg-body); border-color: var(--accent); }
+.size-stack { display: flex; flex-direction: column; gap: 2px; width: 26px; }
+.typo-btn-mini { flex: 1; padding: 0; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 2px; cursor: pointer; font-size: 0.5rem; display: flex; align-items: center; justify-content: center; }
+.typo-btn-mini:hover { background: var(--accent); color: var(--bg-body); border-color: var(--accent); }
+
+body.dev-panel-open { padding-right: 340px; transition: padding-right 0.4s ease; }
+.dev-element-selected { outline: 2px solid var(--accent) !important; outline-offset: -2px; box-shadow: 0 0 0 4px rgba(100, 255, 218, 0.2) !important; z-index: 10; }
+
+@media (max-width: 1023px) {
+  /* Dissolve the aside so its blocks become grid items of .article-layout */
+  .article-layout > .sidebar { display: contents; }
+
+  /* Contents goes first, above the story */
+  .article-layout > .sidebar > .sidebar-block:first-child { order: -1; }
+
+  /* The story stays in the middle */
+  .article-layout > .article-main { order: 0; }
+
+  /* Ledger + Editorial Board fall to the bottom */
+  .article-layout > .sidebar > .sidebar-block { order: 1; }
+
+  /* Grid gap already spaces these; kill the doubled margin */
+  .article-layout > .sidebar > .sidebar-block + .sidebar-block { margin-top: 0; }
+}
+
+
+.article-head-inner { text-align: right; }
+
+/* Kicker is a flex row (line + label) — needs its own centring */
+.article-kicker { justify-content: left; }
+
+/* This one has an explicit text-align: justify, so inheritance won't fix it */
+.article-standfirst { text-align: justify; }
+
+/* Meta row (byline · date) is also a flex container */
+.article-head .card-meta { justify-content: left; }
+
+/* ==========================================================================
+   Article Hero — shared by every article and the About page
+   Quote left, title right on desktop. Title first on mobile.
+   ========================================================================== */
+.article-hero {
+  position: relative;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Soft accent glow behind the split */
+.article-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in srgb, var(--accent) 5%, transparent) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+.article-hero > .wrap { position: relative; z-index: 1; }
+
+.article-hero-split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .article-hero-split {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 5rem;
+  }
+}
+
+/* Title column */
+.article-hero-text .hero-title {
+  font-size: clamp(2.5rem, 1.5rem + 3vw, 3.5rem);
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  color: var(--text-main);
+}
+.article-hero-text .hero-sub {
+  font-family: var(--font-ui);
+  font-size: clamp(1rem, 0.95rem + 0.5vw, 1.25rem);
+  color: var(--text-muted);
+  line-height: 1.6;
+  max-width: 50ch;
+}
+
+/* Quote column */
+.article-hero-quote {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent);
+  border-radius: 2px;
+padding: clamp(0.75rem, 0.7rem + 0.9vw, 1.5rem);
+  box-shadow: 0 10px 30px -20px rgba(0, 0, 0, 0.5);
+}
+.article-hero-quote p {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+  line-height: 1.6;
+  color: var(--text-main);
+  text-align: left;
+}
+
+/* Byline, when present */
+.article-hero .card-meta { margin-top: 1.0rem; }
+
+/* Mobile: title first, quote below */
+@media (max-width: 899px) {
+  .article-hero-text { order: -1; }
+}
+
+.article-hero-quotes {
+  display: grid;
+  gap: .5rem;           /* space between the two boxes */
+  align-content: start;  /* don't stretch them to fill the row */
+}
+
+/* ==========================================================================
+   FINAL FIX BLOCK — paste at end of styles.css
+   Via source order, this:
+     - fixes the theme switcher (lowercase `FibiOS` — what main.js writes)
+     - fixes both swatch-class casings (your HTML is inconsistent)
+     - swaps reveal from transform → translate (so hover lifts still work)
+     - adds card stagger and the shine sweep
+     - kills the four dead right-align rules from earlier drafts
+   ========================================================================== */
+
+/* --- 1. Theme switcher: pressed state + swatch, lowercase ------------- */
+[data-theme="FibiOS"] .theme-switch-btn[data-set-theme="FibiOS"],
+html:not([data-theme]) .theme-switch-btn[data-set-theme="FibiOS"] {
+  color: var(--text-main);
+  background-color: var(--bg-body);
+  border-color: var(--border-color);
+}
+
+.theme-swatch--FibiOS,
+.theme-swatch--FibiOS { background-color: #0A192F; }
+
+/* --- 2. Reveal: translate, not transform ------------------------------ */
+.js-enabled .reveal {
+  opacity: 0;
+  transform: none;
+  translate: 0 30px;
+  transition:
+    opacity 0.8s cubic-bezier(0.25, 0.8, 0.25, 1),
+    translate 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.js-enabled .reveal.active {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* --- 3. Card reveal: stagger + hover with no delay -------------------- */
+.js-enabled .standard-card.reveal {
+  transition:
+    opacity    0.8s cubic-bezier(0.25, 0.8, 0.25, 1) var(--d, 0s),
+    translate  0.8s cubic-bezier(0.25, 0.8, 0.25, 1) var(--d, 0s),
+    border-color     0.2s ease 0s,
+    background-color 0.2s ease 0s,
+    transform        0.2s ease 0s;
+}
+.js-enabled .standards-grid > .reveal:nth-child(2) { --d: 0.07s; }
+.js-enabled .standards-grid > .reveal:nth-child(3) { --d: 0.14s; }
+.js-enabled .standards-grid > .reveal:nth-child(4) { --d: 0.21s; }
+
+/* --- 4. Card shine sweep + slight 3D lean ----------------------------- */
+.standard-card {
+  position: relative;
+  overflow: hidden;
+}
+.standard-card > * {
+  position: relative;
+  z-index: 1;
+}
+.standard-card::after {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0; left: -60%;
+  width: 40%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    color-mix(in srgb, var(--accent) 22%, transparent) 45%,
+    transparent 100%
+  );
+  transform: skewX(-18deg);
+  opacity: 0;
+  transition: left 0.65s ease, opacity 0.2s ease;
+  pointer-events: none;
+}
+.standard-card:hover::after,
+.standard-card:focus-within::after {
+  left: 120%;
+  opacity: 1;
+}
+.standards-grid { perspective: 900px; }
+.standard-card:hover {
+  transform: translateY(-2px) rotateX(1.5deg) rotateY(-2deg);
+}
+
+/* --- 5. Kill dead right-align rules from earlier drafts --------------- */
+.article-head-inner { text-align: initial; }
+.article-kicker { justify-content: initial; }
+.article-head .card-meta { justify-content: initial; }
+
+
+/* ==========================================================================
+   GLOW & SHINE — applies to .standard-card and .article-hero-quote
+   ========================================================================== */
+
+@property --glow-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes glow-spin {
+  to { --glow-angle: 360deg; }
+}
+
+/* Stacking context + anchor for the pseudo-elements */
+.standard-card,
+.article-hero-quote {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* Rotating conic border */
+.standard-card::before,
+.article-hero-quote::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--glow-angle),
+    transparent     0deg,
+    transparent   200deg,
+    var(--accent) 260deg,
+    transparent   320deg,
+    transparent   360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+          mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  animation: glow-spin 3s linear infinite;
+  z-index: 0;
+}
+.standard-card:hover::before,
+.standard-card:focus-within::before,
+.article-hero-quote:hover::before,
+.article-hero-quote:focus-within::before {
+  opacity: 1;
+}
+
+/* Outer halo */
+.standard-card:hover,
+.standard-card:focus-within,
+.article-hero-quote:hover,
+.article-hero-quote:focus-within {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent),
+    0 0 24px -2px color-mix(in srgb, var(--accent) 40%, transparent),
+    0 18px 40px -30px rgba(0, 0, 0, 0.6);
+}
+
+/* Inner shine sweep */
+.standard-card::after,
+.article-hero-quote::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -60%;
+  width: 40%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    color-mix(in srgb, var(--accent) 10%, transparent) 30%,
+    color-mix(in srgb, var(--accent) 40%, transparent) 50%,
+    color-mix(in srgb, var(--accent) 10%, transparent) 70%,
+    transparent 100%
+  );
+  transform: skewX(-18deg);
+  opacity: 0;
+  transition: left 0.7s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.25s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+.standard-card:hover::after,
+.standard-card:focus-within::after,
+.article-hero-quote:hover::after,
+.article-hero-quote:focus-within::after {
+  left: 120%;
+  opacity: 1;
+}
+
+/* Content above the glow, below the shine */
+.standard-card > *,
+.article-hero-quote > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ==========================================================================
+   THEME PALETTE — edit these values to change colours site-wide
+   Source order means this block wins over every earlier :root.
+   ========================================================================== */
+
+/* --- FibiOS surface (default) -------------------------------------- */
+:root,
+[data-theme="FibiOS"],
+[data-theme="FibiOS"] {
+  --bg-body:     #0a202f;   /* page background + dot-grid ground */
+  --bg-card:     #0d101d;   /* cards, sidebar blocks, quote boxes, footer */
+  --bg-input:    #0A192F;   /* form fields, textareas, selects */
+  --text-main:   #CCD6F6;   /* body text, headings, brand */
+  --text-muted:  #8892B0;   /* secondary text, deks, meta, captions */
+  --border-color:#233554;   /* all borders + the 24px dot lattice */
+  --accent:      #64FFDA;   /* buttons, links, tags, glows, focus ring */
+
+  --color-success:#22C55E;  /* "What we hold to" card tint */
+  --color-neutral:#94A3B8;  /* (used by a few dev-mode rules) */
+  --color-warning:#F59E0B;  /* "Chora" card tint */
+  --color-danger: #cf3b15;  /* "What we refuse" card tint */
+}
+
+/* --- Light surface ------------------------------------------------- */
+[data-theme="light"] {
+  --bg-body:     #ebebeb;
+  --bg-card:     #ffffff;
+  --bg-input:    #1e354b;
+  --text-main:   #000000;
+  --text-muted:  #2c2c2c;
+  --border-color:#000000;
+  --accent:      #116466;   
+
+  --color-success:#16A34A;
+  --color-neutral:#64748B;
+  --color-warning:#ff8800;
+  --color-danger: #ff3300;
+}
+
+/* --- Dark surface -------------------------------------------------- */
+[data-theme="dark"] {
+  --bg-body:     #000000;  
+  --bg-card:     #050101;
+  --bg-input:    #050505;
+  --text-main:   #F8F9FA;
+  --text-muted:  #A0A0A0;
+  --border-color:#333333;
+  --accent:      #64FFDA;
+
+  --color-success:#22C55E;
+  --color-neutral:#94A3B8;
+  --color-warning:#F59E0B;
+  --color-danger: #cf3b15;
+}
+
+/* Light mode: translucent dots */
+[data-theme="light"] body,
+[data-theme="light"] .page-article {
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--text-muted) 44%, transparent) 1px,
+    transparent 0.6px
+  );
+}
+
+@keyframes dot-drift {
+  to { background-position: 24px 24px; }
+}
+
+body,
+.page-article {
+  animation: dot-drift 5s linear infinite;
+}
+
+.site-footer {
+  background-color: color-mix(in srgb, var(--bg-card) 35%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* ==========================================================================
+   CONTACT PAGE
+   ========================================================================== */
+
+/* Tighten section rhythm, matching .about-page */
+.contact-page .section {
+  padding-block: clamp(2rem, 1rem + 4vw, 4rem);
+}
+
+/* --- Four doors grid ------------------------------------------------ */
+.contact-doors {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+@media (min-width: 768px) {
+  .contact-doors { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1100px) {
+  .contact-doors { grid-template-columns: repeat(4, 1fr); }
+}
+
+.contact-door {
+  --door-accent: var(--accent);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 1.75rem 1.5rem 1.5rem;
+  background-color: color-mix(in srgb, var(--bg-card) var(--surface-alpha, 66%), transparent);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--door-accent);
+  border-radius: 2px;
+  overflow: hidden;
+  transition:
+    border-color 0.3s ease,
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+.contact-door:hover,
+.contact-door:focus-within {
+  transform: translateY(-3px);
+  border-color: var(--door-accent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--door-accent) 40%, transparent),
+    0 0 26px -8px color-mix(in srgb, var(--door-accent) 55%, transparent),
+    0 18px 40px -30px rgba(0, 0, 0, 0.6);
+}
+
+.contact-door--correction { --door-accent: var(--color-danger); }
+.contact-door--research   { --door-accent: var(--accent); }
+.contact-door--press      { --door-accent: var(--color-warning); }
+.contact-door--reader     { --door-accent: var(--text-muted); }
+
+.contact-door-num {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--door-accent);
+  margin-bottom: 0.75rem;
+}
+
+.contact-door .tag {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  color: var(--door-accent);
+  border-color: color-mix(in srgb, var(--door-accent) 45%, var(--border-color));
+  background-color: transparent;
+}
+
+.contact-door h3 {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  line-height: 1.2;
+  color: var(--text-main);
+  margin: 0.5rem 0 0.75rem;
+}
+
+.contact-door p {
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  flex: 1 1 auto;
+  margin-bottom: 1.25rem;
+}
+
+.contact-door-link {
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--door-accent);
+  align-self: flex-start;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 1px;
+}
+.contact-door-link:hover {
+  border-bottom-color: var(--door-accent);
+  text-decoration: none;
+  color: var(--door-accent);
+}
+
+/* --- Send layout: form + protocol ----------------------------------- */
+.contact-send-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+@media (min-width: 900px) {
+  .contact-send-layout {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 4rem;
+  }
+}
+
+/* Strip the .form frame inside the send column — fields float on the page */
+.contact-send-main .form {
+  max-width: none;
+  margin-top: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+.contact-send-main .form .field input,
+.contact-send-main .form .field textarea,
+.contact-send-main .form .field select {
+  background-color: color-mix(in srgb, var(--bg-input) 55%, transparent);
+}
+
+/* --- Protocol sidebar ----------------------------------------------- */
+.contact-protocol {
+  position: relative;
+  padding: 2rem 1.75rem;
+  background-color: color-mix(in srgb, var(--bg-card) var(--surface-alpha, 35%), transparent);
+  border: 1px solid var(--border-color);
+  border-top: 3px solid var(--accent);
+  border-radius: 2px;
+}
+@media (min-width: 900px) {
+  .contact-protocol { position: sticky; top: 6rem; }
+}
+
+.protocol-title {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 1.75rem;
+}
+
+.protocol-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.protocol-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+.protocol-step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 1rem;
+  top: 2.5rem;
+  bottom: -1.5rem;
+  width: 1px;
+  background: var(--border-color);
+  transform: translateX(-0.5px);
+}
+
+.protocol-step-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: var(--bg-body);
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.protocol-step h4 {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text-main);
+  margin-bottom: 0.25rem;
+}
+
+.protocol-step p {
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ==========================================================================
+   CONTACT SPLIT LAYOUT — heading + doors left, form right
+   ========================================================================== */
+
+.contact-split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+@media (min-width: 1024px) {
+  .contact-split {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: 4rem;
+  }
+}
+
+/* Doors stack single-column on mobile, 2x2 from 768px up.
+   The 2-column rule is scoped to .contact-split so it overrides the
+   page-level 4-column-at-1100px rule from the earlier block. */
+.contact-split .contact-doors {
+  grid-template-columns: 1fr;
+  margin-top: 1.5rem;
+}
+@media (min-width: 768px) {
+  .contact-split .contact-doors {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Right column: strip the outer .form frame so fields float on the page */
+.contact-split-right .form {
+  max-width: none;
+  margin-top: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+.contact-split-right .form .field input,
+.contact-split-right .form .field textarea,
+.contact-split-right .form .field select {
+  background-color: color-mix(in srgb, var(--bg-input) 55%, transparent);
+}
+
+/* Protocol as a full-width horizontal strip */
+.protocol-steps--horizontal {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0;
+}
+@media (min-width: 768px) {
+  .protocol-steps--horizontal {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem 2.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  .protocol-steps--horizontal {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Horizontal variant: number on top, text below, no connector line */
+.protocol-steps--horizontal .protocol-step {
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+.protocol-steps--horizontal .protocol-step::after {
+  display: none;
+}
+.protocol-steps--horizontal .protocol-step-num {
+  width: 2.25rem;
+  height: 2.25rem;
+  margin-bottom: 0.25rem;
+}
+.protocol-steps--horizontal .protocol-step h4 {
+  font-size: 1.0625rem;
+  margin-bottom: 0.35rem;
+}
+.protocol-steps--horizontal .protocol-step p {
+  font-size: 0.875rem;
+}
+
+/* ==========================================================================
+   FOOTER NEWSLETTER — improved layout
+   ========================================================================== */
+
+.footer-newsletter {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+  padding-block: 2.5rem;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+@media (min-width: 768px) {
+  .footer-newsletter {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+}
+
+.footer-newsletter-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-main);
+  margin: 0 0 0.5rem;
+}
+
+.footer-newsletter-desc {
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 42ch;
+  margin: 0;
+}
+
+/* Joined field: input + button share one border */
+.footer-newsletter-field {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+  background-color: color-mix(in srgb, var(--bg-input) 55%, transparent);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+}
+.footer-newsletter-field:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+
+.footer-newsletter-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0.85rem 1rem;
+  border: 0;
+  background: transparent;
+  color: var(--text-main);
+  font-family: var(--font-ui);
+  font-size: 0.9375rem;
+}
+.footer-newsletter-input::placeholder { color: var(--text-muted); }
+.footer-newsletter-input:focus-visible { outline: none; }
+
+.footer-newsletter-button {
+  flex: 0 0 auto;
+  padding: 0 1.5rem;
+  border: 0;
+  border-left: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-main);
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-left-color 0.2s ease;
+}
+.footer-newsletter-button:hover {
+  background-color: var(--accent);
+  border-left-color: var(--accent);
+  color: var(--bg-body);
+}
+.footer-newsletter-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.footer-newsletter-status {
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin-top: 0.6rem;
+  min-height: 1.2em;
+}
+
+.footer-newsletter-trust {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin-top: 0.4rem;
+}
+
+/* EMERGENCY CSS FIX FOR BRAND NAME CASE */
+.brand-name {
+  font-size: 0; /* Hides the text from HTML */
+}
+
+.brand-name::before {
+  content: "FibiOS"; /* Inserts the exact casing you want */
+  font-size: 1.0625rem; /* Restores the size */
+}
+
+/* ==========================================================================
+   TRANSPARENT SEMANTIC CARDS (Hold / Chora / Refuse)
+   ========================================================================== */
+
+/* 1. Base state: 35% transparent (using your --surface-alpha variable) */
+.standard-card {
+  background-color: color-mix(in srgb, var(--bg-body) var(--surface-alpha, 35%), transparent);
+}
+
+/* 2. Hover states: Keep the semantic tint, but apply it ON TOP of the transparent base */
+.standard-card.is-hold:hover {
+  border-color: var(--accent);
+  background-color: color-mix(
+    in srgb,
+    var(--accent) 6%,
+    color-mix(in srgb, var(--bg-body) var(--surface-alpha, 35%), transparent)
+  );
+}
+
+.standard-card.is-chora:hover {
+  border-color: var(--color-warning);
+  background-color: color-mix(
+    in srgb,
+    var(--color-warning) 6%,
+    color-mix(in srgb, var(--bg-body) var(--surface-alpha, 35%), transparent)
+  );
+}
+
+.standard-card.is-refuse:hover {
+  border-color: var(--color-danger);
+  background-color: color-mix(
+    in srgb,
+    var(--color-danger) 6%,
+    color-mix(in srgb, var(--bg-body) var(--surface-alpha, 35%), transparent)
+  );
+}
+
+/* ==========================================================================
+   TRANSPARENT SEMANTIC CARDS (Hold / Chora / Refuse)
+   ========================================================================== */
+
+/* 1. Base state: 35% transparent, pinned to --bg-card */
+.standard-card {
+  background-color: color-mix(in srgb, var(--bg-card) var(--surface-alpha, 35%), transparent);
+}
+
+/* 2. Hover states: Keep the semantic tint, but apply it ON TOP of the transparent base */
+.standard-card.is-hold:hover {
+  border-color: var(--accent);
+  background-color: color-mix(
+    in srgb,
+    var(--accent) 10%,
+    color-mix(in srgb, var(--bg-card) var(--surface-alpha, 35%), transparent)
+  );
+}
+
+.standard-card.is-chora:hover {
+  border-color: var(--color-warning);
+  background-color: color-mix(
+    in srgb,
+    var(--color-warning) 10%,
+    color-mix(in srgb, var(--bg-card) var(--surface-alpha, 35%), transparent)
+  );
+}
+
+.standard-card.is-refuse:hover {
+  border-color: var(--color-danger);
+  background-color: color-mix(
+    in srgb,
+    var(--color-danger) 10%,
+    color-mix(in srgb, var(--bg-card) var(--surface-alpha, 35%), transparent)
+  );
+}
+
+.contact-door h3,
+.contact-door p {
+  text-align: center;
+}
+
+/* You also need to center the "Send a correction →" link */
+.contact-door-link {
+  align-self: center;
+}
+
+/* ==========================================================================
+   ARTICLE HERO BACKGROUND IMAGE
+   ========================================================================== */
+
+.article-hero {
+  position: relative;
+  background-color: var(--bg-body); /* Prevents dots showing through transparent parts of the image */
+  overflow: hidden; /* Keeps the image contained to the hero */
+}
+
+/* The Image Layer */
+.article-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("../img/style-tests/style-c-glossy-v1-banner.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 1; /* 66% visible / 34% transparent */
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Ensure the mint glow sits ON TOP of the image */
+.article-hero::before {
+  z-index: 1; 
+}
+
+/* Ensure the text sits ON TOP of both the image and the glow */
+.article-hero > .wrap {
+  position: relative;
+  z-index: 2; 
+}
+
+:root {
+  --surface-alpha: 60%; /* Lower number = MORE transparent. Higher number = LESS transparent. */
+}
+
+/* ==========================================================================
+   ARTICLE HERO THEME LOCK
+   Forces the article hero to always use light text and dark backgrounds,
+   matching the index.html hero. Prevents colour clash in light mode.
+   ========================================================================== */
+
+/* 1. Ensure the base background is always dark (safe for the image overlay) */
+.article-hero {
+  background-color: #0A192F; 
+}
+
+/* 2. Force all text to be light */
+.article-hero .hero-title {
+  color: #FFFFFF;
+}
+
+.article-hero .hero-sub,
+.article-hero .card-meta,
+.article-hero .card-meta span,
+.article-hero .card-meta time {
+  color: #CCD6F6;
+}
+
+.article-hero .eyebrow {
+  color: #64FFDA; /* Mint accent */
+}
+
+/* Keep the meta separator dot mint */
+.article-hero .card-meta > * + *::before {
+  color: #64FFDA;
+}
+
+/* 3. Force the quote boxes to stay dark with light text */
+.article-hero .article-hero-quote {
+  background-color: rgba(17, 34, 64, 0.85); /* Translucent dark blue */
+  border-color: #233554;
+  border-left-color: #64FFDA;
+}
+
+.article-hero .article-hero-quote p {
+  color: #CCD6F6;
+}
+
+/* 4. Fix the mint glow so it doesn't turn navy in light mode */
+.article-hero::before {
+  background: radial-gradient(
+    circle,
+    rgba(100, 255, 218, 0.08) 0%,
+    transparent 60%
+  );
+}
+
+
+.article-hero {
+  position: relative;
+  isolation: isolate;          /* keeps the negative z-index pseudo inside the hero */
+  overflow-x: clip;            /* stops the 100vw band creating a horizontal scrollbar */
+}
+
+.hero-ribbon {
+  --ribbon-bg: #26292d;        /* charcoal */
+  --ribbon-ink: #f5f2ea;       /* warm off-white */
+  position: relative;
+  margin-top: clamp(1.25rem, 3vw, 2rem);
+  padding-block: clamp(1.25rem, 3vw, 1.75rem);
+  color: var(--ribbon-ink);
+}
+
+.hero-ribbon::before {
+  content: "";
+  position: absolute;
+  z-index: -1;                 /* above hero background image, below the text */
+  inset-block: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  background: var(--ribbon-bg);
+}
+
+/* text inside the band */
+.hero-ribbon .hero-sub { margin: 0; }
+.hero-ribbon .card-meta {
+  margin: 1rem 0 0;
+  color: rgba(245, 242, 234, .72);
+}
+
+/* ==========================================================================
+   ARTICLE 01 HERO — FIXED DARK THEME & IMAGE BACKGROUND
+   ========================================================================== */
+
+/* 1. Base container: force dark background, hide overflow */
+.article-hero {
+  position: relative;
+  background-color: #0A192F; /* Always dark */
+  border-bottom: 1px solid #233554;
+  overflow: hidden;
+}
+
+/* 2. The Image Layer (Opacity 66%) */
+.article-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("../img/style-tests/style-c-glossy-v1-banner.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.66; 
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* 3. The Mint Glow Layer (Sits above image, below text) */
+.article-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(100, 255, 218, 0.08) 0%,
+    transparent 60%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* 4. Ensure text is above the image and glow */
+.article-hero > .wrap {
+  position: relative;
+  z-index: 2;
+}
+
+/* 5. Force text to stay light regardless of theme */
+.article-hero .hero-title {
+  color: #FFFFFF;
+}
+
+.article-hero .hero-sub {
+  color: #CCD6F6;
+}
+
+.article-hero .eyebrow {
+  color: #64FFDA;
+}
+
+.article-hero .card-meta,
+.article-hero .card-meta span,
+.article-hero .card-meta time {
+  color: #8892B0;
+}
+
+/* Keep the meta dot mint */
+.article-hero .card-meta > * + *::before {
+  color: #64FFDA;
+}
+
+/* 6. Force quote boxes to stay dark/glassy */
+.article-hero .article-hero-quote {
+  background-color: rgba(17, 34, 64, 0.85); /* Glassy dark blue */
+  border: 1px solid #233554;
+  border-left: 3px solid #64FFDA;
+  box-shadow: 0 10px 30px -20px rgba(0, 0, 0, 0.5);
+}
+
+.article-hero .article-hero-quote p {
+  color: #CCD6F6; /* Light text */
+}
+
+/* 7. Optional: Make the quote hover effect work in light mode too */
+.article-hero .article-hero-quote:hover {
+  border-color: #64FFDA; /* Ensures the border glows mint, not navy */
+}
+
+/* ==========================================================================
+   HERO TEXT READABILITY (No Boxes)
+   ========================================================================== */
+
+/* 1. Make the subtitle pure white for maximum contrast */
+.article-hero-text .hero-sub {
+  color: #FFFFFF;
+  /* Subtle dark shadow to lift the text off the background image */
+  text-shadow: 
+    0 2px 10px rgba(0, 0, 0, 0.8), 
+    0 1px 3px rgba(0, 0, 0, 1);
+  margin-bottom: 2rem;
+  align-text: justify
+}
+
+/* 2. Apply the same shadow to the Title */
+.article-hero-text .hero-title {
+  text-shadow: 
+    0 2px 10px rgba(0, 0, 0, 0.8), 
+    0 1px 3px rgba(0, 0, 0, 1);
+}
+
+/* 3. Ensure the byline is readable */
+.article-hero .card-meta {
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+/* ==========================================================================
+   CINEMATIC GRADIENT OVERLAY
+   ========================================================================== */
+
+/* This adds a dark fade from the right side over the image */
+.article-hero::after {
+  background-image: 
+    linear-gradient(
+      to left, 
+      rgba(10, 25, 47, 0.95) 0%,    /* Dark navy on the right (under text) */
+      rgba(10, 25, 47, 0.6) 50%,     /* Fades to transparent in the middle */
+      rgba(10, 25, 47, 0) 100%       /* Fully transparent on the left (under quotes) */
+    ),
+    url("../img/style-tests/style-c-glossy-v1-banner.png");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.66; /* Keep your 66% opacity */
+}
+
+/* Make text pure white */
+.article-hero-text .hero-sub {
+  color: #FFFFFF;
+}
+
+/* ==========================================================================
+   CENTER ARTICLE HERO TEXT
+   ========================================================================== */
+
+/* 1. Center the text itself and turn the column into a flex container */
+.article-hero-text {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 2. Center the subtitle box and give it a comfortable width */
+.article-hero-text .hero-sub {
+  margin-inline: auto;
+  max-width: 55ch; /* Keeps it from stretching too wide */
+}
+
+/* 3. Center the byline (The Editors · Date) */
+.article-hero-text .card-meta {
+  justify-content: center;
+}
+
+@media (min-width: 900px) {
+  .article-hero-text {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .article-hero-text .hero-sub {
+    margin-inline: auto;
+  }
+  .article-hero-text .card-meta {
+    justify-content: center;
+  }
+}
+.sidebar-block {
+  text-align: left;
+}
+/* ==========================================================================
+   FOOTER TWEAKS: SOCIALS & SINGLE BORDER
+   ========================================================================== */
+
+/* 1. Fix the double border line */
+.footer-newsletter {
+  border-bottom: none; /* Removes the first line */
+  padding-bottom: 0;   /* Removes the extra space */
+}
+
+.footer-bottom {
+  border-top: 1px solid var(--border-color); /* Keeps the single line above the copyright */
+  margin-top: 3rem;
+}
+
+/* 2. Layout for the Newsletter area (Copy left, Form middle, Socials right) */
+@media (min-width: 1024px) {
+  .footer-newsletter {
+    grid-template-columns: 1fr 1.2fr auto; /* 3 columns */
+    align-items: start;
+  }
+}
+
+/* 3. Social Icons Styling */
+.footer-socials {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+/* Align socials to the right on desktop, left on mobile */
+@media (min-width: 1024px) {
+  .footer-socials {
+    justify-content: flex-end;
+    padding-top: 0.5rem;
+  }
+}
+
+.footer-socials a {
+  color: var(--text-muted);
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: flex;
+}
+
+.footer-socials a:hover {
+  color: var(--accent);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.footer-socials svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+/* ==========================================================================
+   FIX FOOTER NEWSLETTER INPUT IN LIGHT MODE
+   ========================================================================== */
+
+/* 1. Ensure the field container is perfectly transparent/white in Light mode */
+[data-theme="light"] .footer-newsletter-field {
+  background-color: #FFFFFF;
+  border-color: #CBD5E1; /* Slightly darker border so it's visible on white */
+}
+
+/* 2. Force the input itself to be transparent so it doesn't double up on backgrounds */
+.footer-newsletter-input {
+  background-color: transparent !important;
+}
+
+[data-theme="light"] .footer-newsletter-input {
+  color: #0A192F; /* Dark text */
+}
+
+[data-theme="light"] .footer-newsletter-input::placeholder {
+  color: #64748B; /* Soft grey placeholder */
+}
+
+/* 3. Ensure the subscribe button border matches */
+[data-theme="light"] .footer-newsletter-button {
+  border-left-color: #CBD5E1;
+}
+
+/* ==========================================================================
+   FIX: MOBILE MENU & MINT THEME PICKER
+   ========================================================================== */
+
+/* --- 1. Unhide the hamburger menu on mobile --- */
+@media (max-width: 639px) {
+  .nav-toggle {
+    display: inline-flex !important; /* Forces the button to appear */
+  }
+}
+
+/* --- 2. Make the FibiOS picker mint --- */
+
+/* The little swatch dot */
+.theme-swatch--fibiOS,
+.theme-swatch--fibios {
+  background-color: #64FFDA;
+}
+
+/* The active pill button (when FibiOS theme is selected) */
+[data-theme="fibios"] .theme-switch-btn[data-set-theme="fibios"],
+[data-theme="fibiOS"] .theme-switch-btn[data-set-theme="fibiOS"],
+html:not([data-theme]) .theme-switch-btn[data-set-theme="fibios"] {
+  background-color: #64FFDA;
+  border-color: #64FFDA;
+  color: #0A192F; /* Dark text so it's readable on the mint background */
+  font-weight: 700; /* Makes it pop a bit more */
+}
+
+/* Hover state for the inactive FibiOS button (so you see the mint before clicking) */
+.theme-switch-btn[data-set-theme="fibios"]:hover {
+  color: #64FFDA;
+  border-color: #64FFDA;
+}
+
+/* ==========================================================================
+   DROP SHADOWS FOR CARDS
+   ========================================================================== */
+
+/* 1. Target all card/box containers and set the base (Dark/FibiOS) shadow */
+.card,
+.pillar-card,
+.standard-card,
+.contact-door,
+.article-hero-quote,
+.sidebar-block,
+.takeaway,
+.about-taxonomy,
+.about-statement,
+.form {
+  /* A deep, smooth shadow for dark mode */
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.6), 0 4px 10px -5px rgba(0, 0, 0, 0.4);
+}
+
+/* 2. Override with a much softer, lighter shadow for Light Mode */
+[data-theme="light"] .card,
+[data-theme="light"] .pillar-card,
+[data-theme="light"] .standard-card,
+[data-theme="light"] .contact-door,
+[data-theme="light"] .sidebar-block,
+[data-theme="light"] .takeaway,
+[data-theme="light"] .about-taxonomy,
+[data-theme="light"] .about-statement,
+[data-theme="light"] .form {
+  /* A soft, diffused shadow using dark navy instead of pure black */
+  box-shadow: 0 12px 30px -10px rgba(10, 25, 47, 0.08), 0 4px 10px -5px rgba(10, 25, 47, 0.04);
+}
+
+/* 3. Keep the article hero quote box dark since the hero is locked to a dark background */
+[data-theme="light"] .article-hero-quote {
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.6), 0 4px 10px -5px rgba(0, 0, 0, 0.4);
+}
+
+/* ==========================================================================
+   LEDGER HOVER STATES (Accent Highlight)
+   ========================================================================== */
+
+/* 1. Main Feed (Homepage / Articles List) */
+.feed-item[data-status="published"]:hover {
+  /* Subtle mint tint on the row background */
+  background-color: color-mix(in srgb, var(--accent) 22%, var(--bg-card)) !important;
+  border-top-color: var(--accent) !important;
+}
+
+/* Make the title text turn mint */
+.feed-item:hover .feed-title a {
+  color: var(--accent) !important;
+  border-bottom-color: var(--accent) !important;
+}
+
+/* 2. Sidebar Ledger (The list of articles in the sidebar) */
+.article-index-list a:hover {
+  color: var(--accent) !important;
+  /* Optional: Adds a subtle mint background behind the specific link */
+  background-color: color-mix(in srgb, var(--accent) 8%, transparent);
+  /* Optional: Shifts the text slightly to the right for a tactile feel */
+  padding-left: 0.5rem;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+/* Ensure the category tag (e.g., "Biotech") also turns mint */
+.article-index-list a:hover + span,
+.article-index-list li:hover span {
+  color: var(--accent);
+  transition: color 0.2s ease;
+}
+
+/* ==========================================================================
+   HIGH-TECH FULL-BLEED PILLARS
+   ========================================================================== */
+
+/* 1. Full width section */
+.pillars-section {
+  padding-block: 0; /* Remove standard section padding */
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-body);
+}
+
+/* 2. Edge-to-edge container (ignores the standard 1160px wrap) */
+.pillars-container {
+  width: 100%;
+  max-width: none;
+}
+
+/* 3. Grid layout: 3 equal columns, no gaps */
+.pillar-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+@media (min-width: 900px) {
+  .pillar-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 4. The Panes */
+.pillar-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(3rem, 5vw, 6rem) clamp(2rem, 4vw, 5rem); /* Massive padding */
+  background-color: transparent; /* Blend into the page */
+  border: 0;
+  border-bottom: 1px solid var(--border-color);
+  text-decoration: none;
+  overflow: hidden;
+  transition: background-color 0.4s ease;
+}
+
+/* Remove bottom border on the last mobile item */
+.pillar-card:last-child {
+  border-bottom: 0;
+}
+
+@media (min-width: 900px) {
+  .pillar-card {
+    border-bottom: 0;
+    border-right: 1px solid var(--border-color); /* Vertical dividers */
+  }
+  .pillar-card:last-child {
+    border-right: 0;
+  }
+}
+
+/* 5. Hover State: Subtle tint + background number glow */
+.pillar-card:hover {
+  background-color: color-mix(in srgb, var(--accent) 4%, transparent);
+  text-decoration: none;
+}
+
+/* 6. The Massive High-Tech Background Number */
+.pillar-num {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  font-family: var(--font-ui);
+  font-size: 8rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--border-color);
+  opacity: 0.3;
+  transition: color 0.4s ease, opacity 0.4s ease, transform 0.4s ease;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.pillar-card:hover .pillar-num {
+  color: var(--accent);
+  opacity: 0.8;
+  transform: translateY(-5px);
+}
+
+/* 7. The Top Accent Scanning Line */
+.pillar-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%; /* Starts hidden */
+  height: 3px;
+  background-color: var(--accent);
+  transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  z-index: 1;
+}
+
+.pillar-card:hover::before {
+  width: 100%; /* Expands across the top on hover */
+}
+
+/* 8. Text Styling inside the panes */
+.pillar-card h3 {
+  position: relative;
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+  z-index: 1;
+}
+
+.pillar-card .tag {
+  position: relative;
+  align-self: flex-start;
+  margin-bottom: 1.5rem;
+  z-index: 1;
+}
+
+.pillar-card p {
+  position: relative;
+  font-family: var(--font-ui);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--text-muted);
+  z-index: 1;
+  margin: 0;
+}
+
+/* ==========================================================================
+   HIGH-TECH PILLAR EFFECTS (JS Enhanced)
+   ========================================================================== */
+
+/* 1. Prepare the grid for 3D tilting */
+.pillar-grid {
+  perspective: 1200px; /* Gives depth to the 3D tilt */
+}
+
+/* 2. Prepare the card */
+.pillar-card {
+  transform-style: preserve-3d;
+  will-change: transform, background-color;
+  /* Smooth return to center when mouse leaves */
+  transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), 
+              background-color 0.3s ease;
+}
+
+/* Remove the old hover rule so we can control it via JS */
+.pillar-card:hover {
+  background-color: transparent; 
+}
+
+/* 3. The Cursor Spotlight */
+.pillar-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Uses CSS variables --x and --y that will be set by JS */
+  background: radial-gradient(
+    600px circle at var(--x, 50%) var(--y, 50%),
+    color-mix(in srgb, var(--accent) 12%, transparent),
+    transparent 40%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.pillar-card:hover::after {
+  opacity: 
+}
+
+/* Make sure text sits above the spotlight */
+.pillar-card > * {
+  position: relative;
+  z-index: 2;
+  transform: translateZ(30px); /* Pushes text forward in 3D space */
+}
+/* ==========================================================================
+   TRANSPARENT PILLARS (Showing Animated Background)
+   ========================================================================== */
+
+/* 1. Make the section wrapper completely transparent so the body dots show */
+.pillars-section {
+  background-color: transparent !important;
+}
+
+/* 2. Give the cards a glassy 66% transparent background */
+.pillar-card {
+  /* Mixing 34% of the card colour with 66% transparency */
+  background-color: color-mix(in srgb, var(--bg-card) 34%, transparent);
+  
+  /* Optional: Add a subtle backdrop blur to make the dots slightly out of focus under the glass */
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  
+  /* Ensure the 3D tilt still works smoothly */
+  transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), 
+              background-color 0.3s ease;
+}
+
+/* 3. Keep the hover state glassy, but slightly brighter */
+.pillar-card:hover {
+  background-color: color-mix(in srgb, var(--bg-card) 45%, transparent);
+}
+
+/* 4. Ensure the Light theme doesn't look muddy with transparency */
+[data-theme="light"] .pillar-card {
+  background-color: color-mix(in srgb, var(--bg-card) 50%, transparent);
+}
+[data-theme="light"] .pillar-card:hover {
+  background-color: color-mix(in srgb, var(--bg-card) 70%, transparent);
+}
+
+/* ==========================================================================
+   INDEX INTRO / THESIS PANEL
+   ========================================================================== */
+
+.index-intro-split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .index-intro-split {
+    grid-template-columns: 1.1fr 0.9fr; /* Left side slightly wider */
+    gap: 5rem;
+  }
+}
+
+/* --- Left Column: The Statement --- */
+.index-intro-left .hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 1.5rem + 3vw, 3.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
+  margin-bottom: 2rem;
+}
+
+.index-intro-prose p {
+  font-family: var(--font-ui);
+  font-size: clamp(1.0625rem, 1rem + 0.5vw, 1.25rem);
+  line-height: 1.7;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.index-intro-prose p:last-child {
+  color: var(--text-main);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(1.25rem, 1.1rem + 0.8vw, 1.5rem);
+  margin-top: 2rem;
+  margin-bottom: 0;
+}
+
+/* --- Right Column: The High-Tech Thesis Panel --- */
+.index-thesis-panel {
+  position: relative;
+  padding: 2.5rem;
+  background-color: color-mix(in srgb, var(--bg-card) 40%, transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+/* The glowing top border */
+.index-thesis-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
+}
+
+.thesis-label {
+  display: inline-block;
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1rem;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: 2px;
+}
+
+.thesis-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 1.25rem;
+  line-height: 1.3;
+}
+
+.index-thesis-panel p {
+  font-family: var(--font-ui);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.index-thesis-panel .thesis-sub {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--text-main);
+  font-size: 1rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
+  margin-bottom: 2rem;
+}
+
+.thesis-action .btn {
+  width: 100%;
+  text-align: center;
+  display: block;
+  /* Slightly smaller button for the panel */
+  padding: 0.85rem 1.5rem;
+  font-size: 0.75rem;
+}
+
+/* ==========================================================================
+   HOMEPAGE HERO: PURE STATEMENT
+   ========================================================================== */
+
+/* 1. Make the hero massive and centered */
+.hero {
+  position: relative;
+  min-height: 85vh; /* Takes up most of the screen */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: 6rem;
+  background-color: var(--bg-body);
+  border-bottom: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+@media (min-width: 900px) {
+  /* Keep the background image but add a strong dark overlay so text pops */
+  .hero {
+    background-image: 
+      linear-gradient(to bottom, rgba(10, 25, 47, 0.7), rgba(10, 25, 47, 0.95)),
+      url("../img/hero.png");
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: normal; /* Override the old multiply blend */
+  }
+}
+
+/* 2. The Masthead Container */
+.hero-masthead {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  max-width: 1000px;
+  margin-inline: auto;
+}
+
+/* 3. The Kicker with Status Dot */
+.hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: monospace; /* High-tech font */
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 2rem;
+  padding: 0.4rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: 999px;
+  background: rgba(10, 25, 47, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--accent);
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.5); }
+}
+
+/* 4. Massive Typography */
+.hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.5rem, 6vw, 5.5rem); /* HUGE */
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: #FFFFFF;
+  margin-bottom: 2rem;
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.text-accent {
+  color: var(--accent);
+  font-style: italic;
+}
+
+.hero-sub {
+  font-family: var(--font-ui);
+  font-size: clamp(1.125rem, 1.5vw, 1.35rem);
+  line-height: 1.6;
+  color: #CCD6F6;
+  max-width: 65ch;
+  margin-inline: auto;
+  margin-bottom: 3.5rem;
+}
+
+/* 5. Action Buttons */
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border-color: rgba(204, 214, 246, 0.4);
+  color: #FFFFFF;
+}
+
+.btn-outline:hover {
+  background-color: rgba(204, 214, 246, 0.1);
+  border-color: #FFFFFF;
+  color: #FFFFFF;
+}
+
+/* 6. High-Tech Background Decorations */
+.hero-grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(100, 255, 218, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(100, 255, 218, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero-scanline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 10px;
+  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--accent) 20%, transparent), transparent);
+  opacity: 0.3;
+  z-index: 1;
+  pointer-events: none;
+  animation: scan 8s linear infinite;
+}
+
+@keyframes scan {
+  0% { top: -10%; }
+  100% { top: 110%; }
+}
+
+/* Ensure Light theme keeps the dark hero text readable */
+[data-theme="light"] .hero {
+  background-image: 
+      linear-gradient(to bottom, rgba(10, 25, 47, 0.8), rgba(10, 25, 47, 0.95)),
+      url("../img/hero.png");
+}
+
+/* ==========================================================================
+   JS HIGH-TECH HERO EFFECTS
+   ========================================================================== */
+
+/* 1. 3D Parallax preparation */
+.hero-masthead {
+  /* JS will update these variables on mouse move */
+  transform: perspective(1000px) 
+             rotateX(var(--rx, 0deg)) 
+             rotateY(var(--ry, 0deg)) 
+             translate3d(var(--tx, 0), var(--ty, 0), 0);
+  transition: transform 0.1s ease-out;
+  will-change: transform;
+}
+
+/* 2. Interactive Grid Spotlight */
+.hero-grid-overlay {
+  /* By default, fully visible. JS will apply a mask to create a spotlight */
+  transition: opacity 0.3s ease;
+  -webkit-mask-image: radial-gradient(
+    600px circle at var(--mx, 50%) var(--my, 50%),
+    black 0%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    600px circle at var(--mx, 50%) var(--my, 50%),
+    black 0%,
+    transparent 100%
+  );
+}
+
+/* 3. Live Telemetry HUD */
+.hero-hud {
+  position: absolute;
+  bottom: 2rem;
+  left: 2rem;
+  font-family: monospace;
+  font-size: 0.65rem;
+  color: var(--accent);
+  opacity: 0.6;
+  z-index: 10;
+  pointer-events: none;
+  line-height: 1.6;
+}
+
+.hero-hud-right {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  font-family: monospace;
+  font-size: 0.65rem;
+  color: var(--accent);
+  opacity: 0.6;
+  z-index: 10;
+  pointer-events: none;
+  text-align: right;
+  line-height: 1.6;
+}
+
+.hud-val {
+  color: #FFFFFF;
+  font-weight: bold;
+}
+
+/* 4. Decryption text styling */
+.decrypting {
+  color: var(--accent) !important;
+  text-shadow: 0 0 8px var(--accent);
+}
+
+/* ==========================================================================
+   FULL BLEED LEDGER (No Sidebar)
+   ========================================================================== */
+.pub-layout {
+  display: block !important; /* Overrides the old 2-column grid */
+  max-width: 900px; /* Wider reading measure for full-bleed feel */
+  margin-inline: auto;
+
+}
+
+
+/* ==========================================================================
+   FULL-BLEED LEDGER
+   The ledger breaks out of the standard --wrap container so row hover
+   states span edge-to-edge, while each row's text keeps a readable
+   measure and gutter.
+   ========================================================================== */
+
+/* 1. Release the wrap inside the ledger section only */
+#articles > .wrap {
+  max-width: none;
+  padding-inline: 0;
+}
+
+/* 2. Kill the old 900px centered column */
+.pub-layout {
+  display: block !important;
+  max-width: none;
+  margin-inline: 0;
+}
+
+/* 3. Rows fill the viewport; padding provides the reading gutter */
+.feed-item {
+  padding-inline: var(--gutter);
+  margin-inline: 0;
+}
+
+/* 4. Constrain text inside each row to a readable line length */
+.feed-item .feed-title,
+.feed-item .feed-dek,
+.feed-item .card-meta {
+  max-width: var(--measure);
+}
+
+/* 5. Align the section heading + filter bar to the same gutter */
+#articles .section-head,
+#articles .ledger-filters {
+  padding-inline: var(--gutter);
+}
+
+/* 6. Optional: hide the sidebar (matches the "No Sidebar" intent of
+   the earlier override — the HTML still contains it, so it currently
+   drops below the feed as a full-width block) */
+#articles .sidebar {
+  display: none;
+}
+
+
+/* ==========================================================================
+   FULL-BLEED LEDGER WITH SIDE MENU
+   ========================================================================== */
+
+/* 1. Make the section span the full viewport */
+.full-bleed-ledger {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  padding-block: 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-body);
+}
+
+/* 2. The Grid Layout */
+.ledger-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+}
+
+@media (min-width: 900px) {
+  .ledger-layout {
+    grid-template-columns: 320px 1fr; /* Fixed sidebar, fluid feed */
+  }
+}
+
+/* 3. Left Sidebar */
+.ledger-sidebar {
+  padding: clamp(2rem, 4vw, 4rem) var(--gutter);
+  border-bottom: 1px solid var(--border-color);
+  background-color: color-mix(in srgb, var(--bg-card) 34%, transparent);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+@media (min-width: 900px) {
+  .ledger-sidebar {
+    border-bottom: 0;
+    border-right: 1px solid var(--border-color);
+    position: sticky;
+    top: 4.25rem; /* Sticks below the header */
+    height: calc(100vh - 4.25rem);
+    overflow-y: auto;
+    padding-inline: clamp(2rem, 3vw, 3rem);
+  }
+}
+
+.ledger-header {
+  margin-bottom: 3rem;
+}
+
+.ledger-header .section-title {
+  margin-bottom: 0.5rem;
+}
+
+.ledger-header .section-lead {
+  font-size: 0.9375rem;
+  margin-bottom: 0;
+}
+
+/* 4. Vertical Filter Menu */
+.ledger-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 1rem;
+}
+
+.filter-label {
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.filter-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-left: 3px solid transparent;
+  border-radius: 0 2px 2px 0;
+  color: var(--text-muted);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+  color: var(--text-main);
+}
+
+.filter-btn.active {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--accent);
+  border-left-color: var(--accent);
+}
+
+/* 5. Right Feed Area */
+.ledger-main {
+  min-width: 0; /* Prevents flex/grid blowout */
+}
+
+/* Reset the old feed-item margins so they span full width */
+.feed-item {
+  padding: clamp(1.5rem, 3vw, 2.5rem) var(--gutter);
+  margin-inline: 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 0;
+  transition: background-color 180ms ease, border-color 180ms ease;
+}
+
+.feed-item:first-child {
+  border-top: 0;
+}
+
+/* Constrain the text inside the full-width hover rows for readability */
+.feed-item > * {
+  max-width: var(--measure);
+}
+
+@media (min-width: 900px) {
+  .feed-item {
+    padding-inline: clamp(3rem, 5vw, 5rem); /* Generous left padding for reading */
+  }
+}
+
+/* 6. The Editorial Board (now at the bottom of the feed) */
+.ledger-main .sidebar {
+  padding: 3rem var(--gutter);
+  border-top: 1px solid var(--border-color);
+}
+
+.ledger-main .sidebar-block {
+  max-width: var(--measure);
+  margin-inline: 0; /* Align left, matching the feed text */
+}
+
+@media (min-width: 900px) {
+  .ledger-main .sidebar {
+    padding-inline: clamp(3rem, 5vw, 5rem);
+  }
+}
+
+.hero-title {
+  /* Adds a subtle mint glow to the sharpest edge of the shadow */
+  text-shadow: 
+    0 1px 0 color-mix(in srgb, var(--accent) 30%, transparent),
+    0 3px 5px rgba(0, 0, 0, 0.8),
+    0 10px 20px rgba(0, 0, 0, 0.9);
+}
+
+/* ==========================================================================
+   ABOUT PAGE: FULL-WIDTH 3-COLUMN PILLARS
+   ========================================================================== */
+
+.about-pillars-section {
+  /* Add a subtle bottom border to separate the pillars from the editorial content below */
+  border-bottom: 1px solid var(--border-color);
+  padding-block: 3rem;
+}
+
+.about-pillars-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: stretch;
+}
+
+@media (min-width: 900px) {
+  .about-pillars-grid {
+    /* Three equal columns on desktop */
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Make the cards fill the height of the row */
+.about-pillar-item {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 2.5rem 2rem;
+}
+
+/* Style the headings to match the main site typography */
+.about-pillar-item h4 {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  line-height: 1.3;
+  margin-bottom: 1rem;
+  color: var(--text-main);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+/* Push the paragraph down and style it */
+.about-pillar-item p {
+  font-family: var(--font-ui);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin-bottom: 0;
+  flex-grow: 1; /* Pushes content to fill the card evenly */
+}
