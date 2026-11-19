@@ -3420,7 +3420,7 @@ html:not([data-theme]) .theme-switch-btn[data-set-theme="fibios" i] {
   .page-home #architecture {
     background-image:
       linear-gradient(to bottom, rgba(10, 25, 47, 0.7), rgba(10, 25, 47, 0.95)),
-      url("../img/hero-architecture-mobile.png");
+      url("../img/hero-architecture.png");
   }
 }
 
