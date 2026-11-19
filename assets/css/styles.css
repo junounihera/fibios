@@ -1962,14 +1962,18 @@ html:not([data-theme]) .theme-switch-btn[data-set-theme="fibios" i] {
   text-decoration: none;
 }
 
-.article-review-note {
-  max-width: var(--measure);
-  margin: 0 auto 2rem;
-  padding: 1rem var(--gutter);
-  border-top: 1px solid var(--border-color);
+.article-body .prose > .article-review-note {
+  margin: 1.25rem 0 0;
   color: var(--text-muted);
-  font-size: 0.8125rem;
-  line-height: 1.6;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-style: italic;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.article-review-note + .sources {
+  margin-top: 1.25rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
